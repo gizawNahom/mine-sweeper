@@ -31,7 +31,7 @@ describe("Given the game has started", () => {
 		g = new Game(receiver, mineGenerator)
 	})
 
-	test("Then the number of mines must be 10", () => {
+	test("Then the number of flags must be 10", () => {
 		assertFlagCount(10)
 	})
 
@@ -51,7 +51,7 @@ describe("Given the game has started", () => {
 			expect(receiver.flagMessages[0]).toBe("flagged 1,1")
 		})
 
-		test("Then the number of mines must be 9", () => {
+		test("Then the number of flags must be 9", () => {
 			assertFlagCount(9)
 		})
 	})
@@ -82,7 +82,7 @@ describe("Given the game has started", () => {
 			expect(receiver.unflagMessages[0]).toBe("unflagged 1,1")
 		})
 
-		test("Then the number of mines equals 10", () => {
+		test("Then the number of flags equals 10", () => {
 			assertFlagCount(10)
 		})
 	})
