@@ -1,3 +1,5 @@
+import { NUMBER_OF_MINES, MAX_ROW, MAX_COlUMN } from "./constants"
+
 export default class Game {
 	#numberOfFlags
 	#cells = {}
@@ -9,7 +11,7 @@ export default class Game {
 	constructor(receiver, mineGenerator) {
 		this.#receiver = receiver
 
-		this.#numberOfFlags = 10
+		this.#numberOfFlags = NUMBER_OF_MINES
 		this.#numberOfUnrevealedCells = this.rows * this.columns
 		this.#mines = mineGenerator.generate()
 		this.#mines.forEach((element) => {
@@ -22,11 +24,11 @@ export default class Game {
 	}
 
 	get rows() {
-		return 8
+		return MAX_ROW
 	}
 
 	get columns() {
-		return 10
+		return MAX_COlUMN
 	}
 
 	flag(row, column) {

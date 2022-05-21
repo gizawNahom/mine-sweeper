@@ -1,6 +1,4 @@
-const NUMBER_OF_MINES = 10
-const MAX_ROW = 8
-const MAX_COlUMN = 10
+import { NUMBER_OF_MINES, MAX_ROW, MAX_COlUMN } from "./constants"
 
 export default class MineGenerator {
 	generate() {
