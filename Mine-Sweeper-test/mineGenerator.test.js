@@ -1,4 +1,4 @@
-import MineGenerator from "../src/mineGenerator"
+import MineGenerator from "mine-sweeper/src/mineGenerator"
 
 let mineGenerator
 

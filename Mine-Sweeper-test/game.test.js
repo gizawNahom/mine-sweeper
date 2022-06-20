@@ -1,4 +1,4 @@
-import Game from "../src/game"
+import Game from "mine-sweeper/src/game"
 
 /*
 	MINE FIELD 1
