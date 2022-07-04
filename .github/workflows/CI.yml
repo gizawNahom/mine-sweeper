@@ -26,5 +26,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        cache-dependency-path: Mine-Sweeper-test/package-lock.json
+    - run: cd Mine-Sweeper-test
     - run: npm ci
     - run: npm test
