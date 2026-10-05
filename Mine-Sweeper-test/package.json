@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Jest test suite for the mine-sweeper engine",
   "scripts": {
-    "test": "jest"
+    "test": "cd .. && jest",
+    "coverage": "cd .. && jest --coverage"
   },
   "keywords": [],
   "author": "Nahom Gizaw",

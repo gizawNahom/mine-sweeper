@@ -1,6 +1,7 @@
 # Mine-Sweeper
 
 ![Build](https://github.com/gizawNahom/mine-sweeper/actions/workflows/CI.yml/badge.svg)
+![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
 
 A UI-agnostic Minesweeper game engine written in plain JavaScript (ES modules, no dependencies).
 
@@ -48,6 +49,7 @@ game.numberOfFlags // flags remaining
 ```
 Mine-Sweeper/        the engine (src/)
 Mine-Sweeper-test/   Jest test suite, depends on the engine via file:../Mine-Sweeper
+jest.config.js       Jest config; tests run from the repo root so coverage includes the engine
 ```
 
 The tests live in a separate package so the engine itself ships with zero dependencies.
@@ -57,8 +59,17 @@ The tests live in a separate package so the engine itself ships with zero depend
 ```sh
 cd Mine-Sweeper-test
 npm ci
-npm test
+npm test           # run the tests
+npm run coverage   # run the tests with a coverage report
 ```
+
+## Test coverage
+
+| Statements | Branches | Functions | Lines |
+| ---------- | -------- | --------- | ----- |
+| 100%       | 100%     | 100%      | 100%  |
+
+CI enforces 100% coverage of the engine (`Mine-Sweeper/src`), so the build fails if any code goes untested. Coverage measures which code runs during the tests, not whether it behaves correctly; see [Known issues](#known-issues).
 
 ## License
 
