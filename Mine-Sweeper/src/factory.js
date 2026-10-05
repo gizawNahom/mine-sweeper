@@ -1,5 +1,5 @@
-import Game from "./game"
-import MineGenerator from "./mineGenerator"
+import Game from "./game.js"
+import MineGenerator from "./mineGenerator.js"
 
 export default class Factory {
 	static createGame(receiver) {

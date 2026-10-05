@@ -1,4 +1,4 @@
-import { NUMBER_OF_MINES, MAX_ROW, MAX_COlUMN } from "./constants"
+import { NUMBER_OF_MINES, MAX_ROW, MAX_COlUMN } from "./constants.js"
 
 export default class Game {
 	#numberOfFlags

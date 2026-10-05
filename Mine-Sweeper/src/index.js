@@ -1,3 +1,3 @@
-import Factory from "./factory"
+import Factory from "./factory.js"
 
 export { Factory }

@@ -1,18 +1,26 @@
 {
     "name": "mine-sweeper",
     "version": "1.0.0",
-    "description": "",
+    "description": "A UI-agnostic Minesweeper game engine in JavaScript",
     "main": "src/index.js",
     "type": "module",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/nahomD/Mine-Sweeper.git"
+        "url": "git+https://github.com/gizawNahom/mine-sweeper.git"
     },
-    "author": "",
+    "author": "Nahom Gizaw",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/nahomD/Mine-Sweeper/issues"
+        "url": "https://github.com/gizawNahom/mine-sweeper/issues"
     },
-    "homepage": "https://github.com/nahomD/Mine-Sweeper#readme",
-    "dependencies": {}
+    "homepage": "https://github.com/gizawNahom/mine-sweeper#readme",
+    "dependencies": {},
+    "keywords": [
+        "minesweeper",
+        "game",
+        "engine"
+    ],
+    "engines": {
+        "node": ">=18"
+    }
 }
