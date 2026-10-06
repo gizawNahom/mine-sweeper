@@ -369,12 +369,18 @@ describe("Given the game has started", () => {
 
 	function revealAllUnarmedExceptOne() {
 		let toBeRevealed = buildCells()
-			.filter(({ row, column }) => !MineGeneratorStub1.mines.includes(`${row}${column}`))
+			.filter((cell) => !isMine(cell))
 			.slice(0, 69)
 
 		toBeRevealed.forEach(({ row, column }) => g.reveal(row, column))
 
 		receiver.clearMessages()
+	}
+
+	function isMine({ row, column }) {
+		return MineGeneratorStub1.mines.some(
+			(mine) => mine.row === row && mine.column === column
+		)
 	}
 
 	function buildCells() {
@@ -387,9 +393,9 @@ describe("Given the game has started", () => {
 
 	function assertEndGame() {
 		expect(receiver.endGameMessages.length).toBe(1)
-		expect(receiver.endGameMessages[0].sort()).toEqual(
-			MineGeneratorStub1.mines.sort()
-		)
+		const mines = receiver.endGameMessages[0]
+		expect(mines).toHaveLength(MineGeneratorStub1.mines.length)
+		expect(mines).toEqual(expect.arrayContaining(MineGeneratorStub1.mines))
 	}
 
 	function assertTotalMessageCount(count) {
@@ -433,7 +439,10 @@ class ReceiverSpy {
 }
 
 class MineGeneratorStub1 {
-	static mines = ["12", "21", "22", "23", "79", "71", "72", "27", "28", "29"]
+	static mines = [
+		{ row: 1, column: 2 }, { row: 2, column: 1 }, { row: 2, column: 2 }, { row: 2, column: 3 }, { row: 7, column: 9 },
+		{ row: 7, column: 1 }, { row: 7, column: 2 }, { row: 2, column: 7 }, { row: 2, column: 8 }, { row: 2, column: 9 },
+	]
 	generate() {
 		return MineGeneratorStub1.mines
 	}
@@ -441,6 +450,9 @@ class MineGeneratorStub1 {
 
 class MineGeneratorStub2 {
 	generate() {
-		return ["12", "21", "22", "23", "55", "15", "33", "27", "28", "29"]
+		return [
+			{ row: 1, column: 2 }, { row: 2, column: 1 }, { row: 2, column: 2 }, { row: 2, column: 3 }, { row: 5, column: 5 },
+			{ row: 1, column: 5 }, { row: 3, column: 3 }, { row: 2, column: 7 }, { row: 2, column: 8 }, { row: 2, column: 9 },
+		]
 	}
 }

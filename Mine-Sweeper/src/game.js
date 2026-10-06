@@ -55,7 +55,7 @@ export default class Game {
 	}
 
 	#changeStateToFlagged(row, column) {
-		this.#setCellState(`${row}${column}`, CellState.FLAGGED)
+		this.#setCellState(this.#cellKey(row, column), CellState.FLAGGED)
 	}
 
 	#flagReceiver(row, column) {
@@ -77,7 +77,7 @@ export default class Game {
 	}
 
 	#changeStateToHidden(row, column) {
-		this.#setCellState(`${row}${column}`, undefined)
+		this.#setCellState(this.#cellKey(row, column), undefined)
 	}
 
 	#unflagReceiver(row, column) {
@@ -110,7 +110,7 @@ export default class Game {
 	}
 
 	#changeStateToRevealed(row, column) {
-		this.#setCellState(`${row}${column}`, CellState.REVEALED)
+		this.#setCellState(this.#cellKey(row, column), CellState.REVEALED)
 	}
 
 	#setCellState(cell, state) {
@@ -183,7 +183,7 @@ export default class Game {
 	}
 
 	#isCellArmed(row, column) {
-		return this.#mines.includes(`${row}${column}`)
+		return this.#mines.some((mine) => mine.row === row && mine.column === column)
 	}
 
 	#revealReceiver({ row, column, numberOfAdjacentMines }) {
@@ -213,8 +213,12 @@ export default class Game {
 		return this.#cellState(row, column) === CellState.REVEALED
 	}
 
+	#cellKey(row, column) {
+		return `${row},${column}`
+	}
+
 	#cellState(row, column) {
-		return this.#cells[`${row}${column}`]
+		return this.#cells[this.#cellKey(row, column)]
 	}
 
 	#revealCells(unrevealed) {

@@ -18,8 +18,10 @@ export default class MineGenerator {
 		do {
 			row = this.#randomRow()
 			column = this.#randomColumn()
-		} while (generated.includes(`${row}${column}`))
-		return `${row}${column}`
+		} while (
+			generated.some((mine) => mine.row === row && mine.column === column)
+		)
+		return { row, column }
 	}
 
 	#randomRow() {

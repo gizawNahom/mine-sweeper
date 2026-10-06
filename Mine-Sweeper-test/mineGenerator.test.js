@@ -14,12 +14,18 @@ it("Should generate 10 valid mines", () => {
 	expect(valid.length).toBe(10)
 })
 
+it("Should describe each mine by its row and column", () => {
+	mineGenerator.generate().forEach((mine) => {
+		expect(mine).toEqual({ row: expect.any(Number), column: expect.any(Number) })
+	})
+})
+
 function validMines(mines) {
 	return mines.filter((mine, i, self) => {
 		if (validRow(mine) && validColumn(mine) && unique()) return true
 
 		function unique() {
-			return self.indexOf(mine) === i
+			return self.findIndex((m) => m.row === mine.row && m.column === mine.column) === i
 		}
 	})
 }
@@ -35,11 +41,11 @@ function validColumn(mine) {
 }
 
 function rowOf(mine) {
-	return +mine[0]
+	return mine.row
 }
 
 function columnOf(mine) {
-	return +mine.substring(1)
+	return mine.column
 }
 
 it("Should be able to place mines in every row and column", () => {
