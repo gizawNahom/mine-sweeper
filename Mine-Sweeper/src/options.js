@@ -1,4 +1,5 @@
 import { NUMBER_OF_MINES, MAX_ROW, MAX_COlUMN } from "./constants.js"
+import { checkNumber, show } from "./validation.js"
 
 const OPTION_NAMES = ["rows", "columns", "mines"]
 
@@ -42,13 +43,4 @@ function checkMines(mines, rows, columns) {
 		throw new RangeError(
 			`mines must be a whole number from 1 to ${maxMines} for a ${board} board, got ${show(mines)}`
 		)
-}
-
-function checkNumber(name, value) {
-	if (typeof value !== "number")
-		throw new TypeError(`${name} must be a number, got ${show(value)}`)
-}
-
-function show(value) {
-	return typeof value === "string" ? JSON.stringify(value) : String(value)
 }

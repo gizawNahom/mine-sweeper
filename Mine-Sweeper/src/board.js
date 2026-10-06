@@ -1,3 +1,5 @@
+import { checkNumber, show } from "./validation.js"
+
 export default class Board {
 	#rows
 	#columns
@@ -17,6 +19,19 @@ export default class Board {
 
 	get numberOfCells() {
 		return this.#rows * this.#columns
+	}
+
+	checkCell(row, column) {
+		this.#checkCoordinate("row", row, this.#rows)
+		this.#checkCoordinate("column", column, this.#columns)
+	}
+
+	#checkCoordinate(name, value, max) {
+		checkNumber(name, value)
+		if (!Number.isInteger(value) || !this.#isWithin(value, max))
+			throw new RangeError(
+				`${name} must be a whole number from 1 to ${max}, got ${show(value)}`
+			)
 	}
 
 	adjacents(row, column) {
@@ -51,10 +66,14 @@ export default class Board {
 	}
 
 	#isRowValid(row) {
-		return row >= 1 && row <= this.#rows
+		return this.#isWithin(row, this.#rows)
 	}
 
 	#isColumnValid(column) {
-		return column >= 1 && column <= this.#columns
+		return this.#isWithin(column, this.#columns)
+	}
+
+	#isWithin(value, max) {
+		return value >= 1 && value <= max
 	}
 }

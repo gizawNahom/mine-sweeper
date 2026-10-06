@@ -35,6 +35,7 @@ export default class Game {
 	}
 
 	flag(row, column) {
+		this.#board.checkCell(row, column)
 		if (this.#shouldFlag(row, column)) this.#flagCell(row, column)
 	}
 
@@ -69,6 +70,7 @@ export default class Game {
 	}
 
 	unflag(row, column) {
+		this.#board.checkCell(row, column)
 		if (this.#isFlagged(row, column)) this.#unflagCell(row, column)
 	}
 
@@ -91,6 +93,7 @@ export default class Game {
 	}
 
 	reveal(row, column) {
+		this.#board.checkCell(row, column)
 		if (!this.#shouldReveal(row, column)) return
 		if (this.#isCellArmed(row, column)) this.#endGame()
 		else this.#revealSafeCell(row, column)

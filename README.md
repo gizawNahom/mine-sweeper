@@ -12,6 +12,7 @@ The engine holds the game rules — mine placement, flagging, revealing, flood-f
 - By default the board is **8 rows × 10 columns** with **10 mines**. Rows, columns and mines are configurable.
 - You get one flag per mine.
 - Rows and columns must be whole numbers of at least 1, and mines a whole number from 1 to one less than the number of cells, so there is always at least one safe cell. Invalid or misspelled options throw a `TypeError` or `RangeError` when the game is created.
+- `reveal`, `flag` and `unflag` throw the same way for a position that is not on the board (for example `reveal(0, 5)` or `reveal("13")`); a rejected move changes nothing.
 - Rows and columns are **1-indexed**.
 - Revealing a cell with no adjacent mines automatically reveals its neighbours.
 - Revealing a mine ends the game. The game is also won (and ended) once every safe cell has been revealed.
