@@ -1,5 +1,7 @@
+import { NUMBER_OF_MINES, MAX_ROW, MAX_COlUMN } from "./constants.js"
 import Board from "./board.js"
-import gameOptions from "./options.js"
+
+const OPTION_NAMES = ["rows", "columns", "mines"]
 
 export default class Game {
 	#numberOfMines
@@ -12,14 +14,28 @@ export default class Game {
 	#receiver
 
 	constructor(receiver, mineGenerator, options) {
-		const { rows, columns, mines } = gameOptions(options)
+		const { rows, columns, mines } = this.#readOptions(options)
 		this.#receiver = receiver
 		this.#board = new Board(rows, columns)
+		this.#board.checkMineCount(mines)
 
 		this.#numberOfMines = mines
 		this.#numberOfFlags = mines
 		this.#numberOfUnrevealedCells = this.#board.numberOfCells
 		this.#mines = mineGenerator.generate({ rows, columns, mines })
+	}
+
+	#readOptions(options = {}) {
+		Object.keys(options).forEach((name) => {
+			if (!OPTION_NAMES.includes(name))
+				throw new TypeError(`unknown option ${JSON.stringify(name)}`)
+		})
+		const {
+			rows = MAX_ROW,
+			columns = MAX_COlUMN,
+			mines = NUMBER_OF_MINES,
+		} = options
+		return { rows, columns, mines }
 	}
 
 	get numberOfFlags() {

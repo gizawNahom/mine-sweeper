@@ -1,12 +1,16 @@
-import { checkNumber, show } from "./validation.js"
-
 export default class Board {
 	#rows
 	#columns
 
 	constructor(rows, columns) {
+		this.#checkSize("rows", rows)
+		this.#checkSize("columns", columns)
 		this.#rows = rows
 		this.#columns = columns
+		if (this.maxMines < 1)
+			throw new RangeError(
+				`a ${this.#name} board is too small: it needs room for at least 1 mine and 1 safe cell`
+			)
 	}
 
 	get rows() {
@@ -21,17 +25,53 @@ export default class Board {
 		return this.#rows * this.#columns
 	}
 
+	get maxMines() {
+		return this.numberOfCells - 1
+	}
+
+	get #name() {
+		return `${this.#rows}x${this.#columns}`
+	}
+
+	checkMineCount(mines) {
+		const max = this.maxMines
+		this.#checkWholeNumber(
+			"mines",
+			mines,
+			(value) => this.#isWithin(value, max),
+			`from 1 to ${max} for a ${this.#name} board`
+		)
+	}
+
 	checkCell(row, column) {
 		this.#checkCoordinate("row", row, this.#rows)
 		this.#checkCoordinate("column", column, this.#columns)
 	}
 
+	#checkSize(name, value) {
+		this.#checkWholeNumber(name, value, (value) => value >= 1, "of at least 1")
+	}
+
 	#checkCoordinate(name, value, max) {
-		checkNumber(name, value)
-		if (!Number.isInteger(value) || !this.#isWithin(value, max))
+		this.#checkWholeNumber(
+			name,
+			value,
+			(value) => this.#isWithin(value, max),
+			`from 1 to ${max}`
+		)
+	}
+
+	#checkWholeNumber(name, value, isAllowed, allowed) {
+		if (typeof value !== "number")
+			throw new TypeError(`${name} must be a number, got ${this.#show(value)}`)
+		if (!Number.isInteger(value) || !isAllowed(value))
 			throw new RangeError(
-				`${name} must be a whole number from 1 to ${max}, got ${show(value)}`
+				`${name} must be a whole number ${allowed}, got ${this.#show(value)}`
 			)
+	}
+
+	#show(value) {
+		return typeof value === "string" ? JSON.stringify(value) : String(value)
 	}
 
 	adjacents(row, column) {
