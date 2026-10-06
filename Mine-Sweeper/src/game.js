@@ -1,18 +1,21 @@
-import { NUMBER_OF_MINES, MAX_ROW, MAX_COlUMN } from "./constants.js"
+import { NUMBER_OF_MINES } from "./constants.js"
+import Board from "./board.js"
 
 export default class Game {
 	#numberOfFlags
 	#cells = {}
 	#numberOfUnrevealedCells
 	#mines
+	#board
 
 	#receiver
 
-	constructor(receiver, mineGenerator) {
+	constructor(receiver, mineGenerator, board = new Board()) {
 		this.#receiver = receiver
+		this.#board = board
 
 		this.#numberOfFlags = NUMBER_OF_MINES
-		this.#numberOfUnrevealedCells = this.rows * this.columns
+		this.#numberOfUnrevealedCells = board.numberOfCells
 		this.#mines = mineGenerator.generate()
 	}
 
@@ -21,11 +24,11 @@ export default class Game {
 	}
 
 	get rows() {
-		return MAX_ROW
+		return this.#board.rows
 	}
 
 	get columns() {
-		return MAX_COlUMN
+		return this.#board.columns
 	}
 
 	flag(row, column) {
@@ -122,7 +125,7 @@ export default class Game {
 	}
 
 	#revealCell(row, column) {
-		const adjacents = this.#adjacents(row, column)
+		const adjacents = this.#board.adjacents(row, column)
 		const numberOfAdjacentMines = this.#numberOfAdjacentMines(adjacents)
 		this.#revealReceiver({
 			row,
@@ -131,46 +134,6 @@ export default class Game {
 		})
 		if (this.#noAdjacentMines(numberOfAdjacentMines))
 			this.#revealUnrevealedAdjacents(adjacents)
-	}
-
-	#adjacents(row, column) {
-		const allAdjacents = this.#allAdjacents(row, column)
-		return this.#validAdjacents(allAdjacents)
-	}
-
-	#allAdjacents(row, column) {
-		const rightCell = { row, column: column + 1 }
-		const bottomRightCell = { row: row + 1, column: column + 1 }
-		const bottomCell = { row: row + 1, column }
-		const bottomLeftCell = { row: row + 1, column: column - 1 }
-		const leftCell = { row, column: column - 1 }
-		const topLeftCell = { row: row - 1, column: column - 1 }
-		const topCell = { row: row - 1, column }
-		const topRightCell = { row: row - 1, column: column + 1 }
-		return [
-			rightCell,
-			bottomRightCell,
-			bottomCell,
-			bottomLeftCell,
-			leftCell,
-			topLeftCell,
-			topCell,
-			topRightCell,
-		]
-	}
-
-	#validAdjacents(allAdjacents) {
-		return allAdjacents.filter(
-			({ row, column }) => this.#isRowValid(row) && this.#isColumnValid(column)
-		)
-	}
-
-	#isRowValid(row) {
-		return row >= 1 && row <= this.rows
-	}
-
-	#isColumnValid(column) {
-		return column >= 1 && column <= this.columns
 	}
 
 	#numberOfAdjacentMines(adjacents) {

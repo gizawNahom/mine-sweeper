@@ -1,6 +1,13 @@
-import { NUMBER_OF_MINES, MAX_ROW, MAX_COlUMN } from "./constants.js"
+import { NUMBER_OF_MINES } from "./constants.js"
+import Board from "./board.js"
 
 export default class MineGenerator {
+	#board
+
+	constructor(board = new Board()) {
+		this.#board = board
+	}
+
 	generate() {
 		const mines = []
 		for (let i = 0; i < NUMBER_OF_MINES; i++) this.#generateMine(mines)
@@ -25,10 +32,10 @@ export default class MineGenerator {
 	}
 
 	#randomRow() {
-		return Math.floor(Math.random() * MAX_ROW) + 1
+		return Math.floor(Math.random() * this.#board.rows) + 1
 	}
 
 	#randomColumn() {
-		return Math.floor(Math.random() * MAX_COlUMN) + 1
+		return Math.floor(Math.random() * this.#board.columns) + 1
 	}
 }
