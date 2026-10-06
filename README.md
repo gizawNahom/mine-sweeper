@@ -16,7 +16,6 @@ The engine holds the game rules — mine placement, flagging, revealing, flood-f
 
 ### Known issues
 
-- Flagging mines prevents the win from being detected: the win check compares unrevealed cells to *remaining* flags.
 - The mine generator never places mines in the last row (8) or last column (10).
 
 ## Usage

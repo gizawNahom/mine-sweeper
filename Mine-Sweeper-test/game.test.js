@@ -350,6 +350,23 @@ describe("Given the game has started", () => {
 		})
 	})
 
+	describe("And the user has flagged some armed cells", () => {
+		describe("When the user reveals the last unarmed cell", () => {
+			test("Then the game ends successfully", () => {
+				g.flag(1, 2)
+				g.flag(2, 1)
+				g.flag(2, 2)
+				revealAllUnarmedExceptOne()
+
+				g.reveal(8, 10)
+
+				assertTotalMessageCount(2)
+				assertRevealMessageCount(1)
+				assertEndGame()
+			})
+		})
+	})
+
 	function revealAllUnarmedExceptOne() {
 		let toBeRevealed = buildCells()
 			.filter(({ row, column }) => !MineGeneratorStub1.mines.includes(`${row}${column}`))

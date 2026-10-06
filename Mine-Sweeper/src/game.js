@@ -225,7 +225,7 @@ export default class Game {
 	}
 
 	#hasSweepedMines() {
-		return this.#numberOfUnrevealedCells === this.#numberOfFlags
+		return this.#numberOfUnrevealedCells === NUMBER_OF_MINES
 	}
 }
 
