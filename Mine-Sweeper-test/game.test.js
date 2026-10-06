@@ -316,18 +316,18 @@ describe("Given the game has started", () => {
 
 	function revealAllUnarmedExceptOne() {
 		let toBeRevealed = buildCells()
-			.filter((e) => !MineGeneratorStub1.mines.includes(e))
+			.filter(({ row, column }) => !MineGeneratorStub1.mines.includes(`${row}${column}`))
 			.slice(0, 69)
 
-		toBeRevealed.forEach((e) => g.reveal(e))
+		toBeRevealed.forEach(({ row, column }) => g.reveal(row, column))
 
 		receiver.clearMessages()
 	}
 
 	function buildCells() {
 		const cells = []
-		for (let i = 1; i < 9; i++) {
-			for (let j = 1; j < 11; j++) cells.push(`${i}${j}`)
+		for (let row = 1; row < 9; row++) {
+			for (let column = 1; column < 11; column++) cells.push({ row, column })
 		}
 		return cells
 	}
