@@ -1,0 +1,16 @@
+version: 2
+updates:
+  # Test tooling (Jest, Babel). The engine itself has no dependencies.
+  - package-ecosystem: npm
+    directory: /Mine-Sweeper-test
+    schedule:
+      interval: weekly
+    groups:
+      # One PR for all minor/patch bumps; majors still get their own PR.
+      test-tooling:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
