@@ -23,10 +23,10 @@ export default class MineGenerator {
 	}
 
 	#randomRow() {
-		return Math.floor(Math.random() * (MAX_ROW - 1)) + 1
+		return Math.floor(Math.random() * MAX_ROW) + 1
 	}
 
 	#randomColumn() {
-		return Math.floor(Math.random() * (MAX_COlUMN - 1)) + 1
+		return Math.floor(Math.random() * MAX_COlUMN) + 1
 	}
 }

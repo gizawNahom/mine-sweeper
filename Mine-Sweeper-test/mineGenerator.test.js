@@ -25,16 +25,36 @@ function validMines(mines) {
 }
 
 function validRow(mine) {
-	const row = +mine[0]
+	const row = rowOf(mine)
 	return row >= 1 && row <= 8
 }
 
 function validColumn(mine) {
-	let column
-	if (mine.length == 3) column = +mine.substring(1)
-	else column = +mine[1]
+	const column = columnOf(mine)
 	return column >= 1 && column <= 10
 }
+
+function rowOf(mine) {
+	return +mine[0]
+}
+
+function columnOf(mine) {
+	return +mine.substring(1)
+}
+
+it("Should be able to place mines in every row and column", () => {
+	const rows = new Set()
+	const columns = new Set()
+	for (let i = 0; i < 1000; i++) {
+		mineGenerator.generate().forEach((mine) => {
+			rows.add(rowOf(mine))
+			columns.add(columnOf(mine))
+		})
+	}
+
+	expect([...rows].sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
+	expect([...columns].sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+})
 
 it("Should generate random mines", () => {
 	assertNoThreeMinesAreEqual(mineGenerator)

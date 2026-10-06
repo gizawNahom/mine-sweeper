@@ -14,10 +14,6 @@ The engine holds the game rules — mine placement, flagging, revealing, flood-f
 - Revealing a cell with no adjacent mines automatically reveals its neighbours.
 - Revealing a mine ends the game. The game is also won (and ended) once every safe cell has been revealed.
 
-### Known issues
-
-- The mine generator never places mines in the last row (8) or last column (10).
-
 ## Usage
 
 Requires Node.js 18 or later.
@@ -68,7 +64,7 @@ npm run coverage   # run the tests with a coverage report
 | ---------- | -------- | --------- | ----- |
 | 100%       | 100%     | 100%      | 100%  |
 
-CI enforces 100% coverage of the engine (`Mine-Sweeper/src`), so the build fails if any code goes untested. Coverage measures which code runs during the tests, not whether it behaves correctly; see [Known issues](#known-issues).
+CI enforces 100% coverage of the engine (`Mine-Sweeper/src`), so the build fails if any code goes untested. Coverage measures which code runs during the tests, not whether it behaves correctly.
 
 ## License
 
