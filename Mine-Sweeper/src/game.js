@@ -4,7 +4,6 @@ import Board from "./board.js"
 const OPTION_NAMES = ["rows", "columns", "mines"]
 
 export default class Game {
-	#numberOfMines
 	#numberOfFlags
 	#cells = {}
 	#numberOfUnrevealedCells
@@ -16,10 +15,8 @@ export default class Game {
 	constructor(receiver, mineGenerator, options) {
 		const { rows, columns, mines } = this.#readOptions(options)
 		this.#receiver = receiver
-		this.#board = new Board(rows, columns)
-		this.#board.checkMineCount(mines)
+		this.#board = new Board(rows, columns, mines)
 
-		this.#numberOfMines = mines
 		this.#numberOfFlags = mines
 		this.#numberOfUnrevealedCells = this.#board.numberOfCells
 		this.#mines = mineGenerator.generate({ rows, columns, mines })
@@ -214,7 +211,7 @@ export default class Game {
 	}
 
 	#hasSweepedMines() {
-		return this.#numberOfUnrevealedCells === this.#numberOfMines
+		return this.#numberOfUnrevealedCells === this.#board.mines
 	}
 }
 

@@ -1,16 +1,19 @@
 export default class Board {
 	#rows
 	#columns
+	#mines
 
-	constructor(rows, columns) {
+	constructor(rows, columns, mines) {
 		this.#checkSize("rows", rows)
 		this.#checkSize("columns", columns)
 		this.#rows = rows
 		this.#columns = columns
-		if (this.maxMines < 1)
+		if (this.#maxMines < 1)
 			throw new RangeError(
 				`a ${this.#name} board is too small: it needs room for at least 1 mine and 1 safe cell`
 			)
+		this.#checkMines(mines)
+		this.#mines = mines
 	}
 
 	get rows() {
@@ -25,22 +28,16 @@ export default class Board {
 		return this.#rows * this.#columns
 	}
 
-	get maxMines() {
+	get mines() {
+		return this.#mines
+	}
+
+	get #maxMines() {
 		return this.numberOfCells - 1
 	}
 
 	get #name() {
 		return `${this.#rows}x${this.#columns}`
-	}
-
-	checkMineCount(mines) {
-		const max = this.maxMines
-		this.#checkWholeNumber(
-			"mines",
-			mines,
-			(value) => this.#isWithin(value, max),
-			`from 1 to ${max} for a ${this.#name} board`
-		)
 	}
 
 	checkCell(row, column) {
@@ -50,6 +47,16 @@ export default class Board {
 
 	#checkSize(name, value) {
 		this.#checkWholeNumber(name, value, (value) => value >= 1, "of at least 1")
+	}
+
+	#checkMines(mines) {
+		const max = this.#maxMines
+		this.#checkWholeNumber(
+			"mines",
+			mines,
+			(value) => this.#isWithin(value, max),
+			`from 1 to ${max} for a ${this.#name} board`
+		)
 	}
 
 	#checkCoordinate(name, value, max) {
