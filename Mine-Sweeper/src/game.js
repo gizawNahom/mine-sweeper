@@ -14,9 +14,6 @@ export default class Game {
 		this.#numberOfFlags = NUMBER_OF_MINES
 		this.#numberOfUnrevealedCells = this.rows * this.columns
 		this.#mines = mineGenerator.generate()
-		this.#mines.forEach((element) => {
-			this.#cells[element] = CellState.ARMED
-		})
 	}
 
 	get numberOfFlags() {
@@ -36,15 +33,11 @@ export default class Game {
 	}
 
 	#shouldFlag(row, column) {
-		return this.#enoughFlags() && this.#isCellUnrevealed(row, column)
+		return this.#enoughFlags() && this.#isCellHidden(row, column)
 	}
 
 	#enoughFlags() {
 		return this.#numberOfFlags > 0
-	}
-
-	#isCellUnrevealed(row, column) {
-		return this.#isCellHidden(row, column) || this.#isCellArmed(row, column)
 	}
 
 	#isCellHidden(row, column) {
@@ -92,13 +85,16 @@ export default class Game {
 	}
 
 	reveal(row, column) {
+		if (!this.#shouldReveal(row, column)) return
 		if (this.#isCellArmed(row, column)) this.#endGame()
-		else if (this.#shouldReveal(row, column)) {
-			this.#changeStateToRevealed(row, column)
-			this.#decrementNumberOfUnrevealed()
-			this.#revealCell(row, column)
-			if (this.#hasSweepedMines()) this.#endGame()
-		}
+		else this.#revealSafeCell(row, column)
+	}
+
+	#revealSafeCell(row, column) {
+		this.#changeStateToRevealed(row, column)
+		this.#decrementNumberOfUnrevealed()
+		this.#revealCell(row, column)
+		if (this.#hasSweepedMines()) this.#endGame()
 	}
 
 	#endGame() {
@@ -187,7 +183,7 @@ export default class Game {
 	}
 
 	#isCellArmed(row, column) {
-		return this.#cellState(row, column) === CellState.ARMED
+		return this.#mines.includes(`${row}${column}`)
 	}
 
 	#revealReceiver({ row, column, numberOfAdjacentMines }) {
@@ -236,7 +232,6 @@ export default class Game {
 const CellState = {
 	REVEALED: 0,
 	FLAGGED: 1,
-	ARMED: 2,
 }
 
 Object.freeze(CellState)

@@ -296,6 +296,42 @@ describe("Given the game has started", () => {
 		})
 	})
 
+	describe("And the user has flagged an armed cell", () => {
+		beforeEach(() => {
+			g.flag(7, 9)
+			receiver.clearMessages()
+		})
+
+		describe("When the user reveals a cell adjacent only to it", () => {
+			test("Then the cell must count it as an adjacent mine", () => {
+				g.reveal(8, 10)
+
+				assertTotalMessageCount(1)
+				expect(receiver.revealMessages[0]).toBe("revealed 8,10 1")
+			})
+		})
+
+		describe("When the user reveals it", () => {
+			test("Then nothing happens", () => {
+				g.reveal(7, 9)
+
+				assertTotalMessageCount(0)
+			})
+		})
+
+		describe("When the user unflags and then reveals it", () => {
+			test("Then the game must end unsuccessfully", () => {
+				g.unflag(7, 9)
+				receiver.clearMessages()
+
+				g.reveal(7, 9)
+
+				assertTotalMessageCount(1)
+				assertEndGame()
+			})
+		})
+	})
+
 	function assertRevealMessageCount(count) {
 		expect(receiver.revealMessages.length).toBe(count)
 	}
