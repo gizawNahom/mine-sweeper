@@ -1,41 +1,30 @@
 import { NUMBER_OF_MINES } from "./constants.js"
-import Board from "./board.js"
 
 export default class MineGenerator {
-	#board
-
-	constructor(board = new Board()) {
-		this.#board = board
-	}
-
-	generate() {
+	generate(size) {
 		const mines = []
-		for (let i = 0; i < NUMBER_OF_MINES; i++) this.#generateMine(mines)
+		for (let i = 0; i < NUMBER_OF_MINES; i++) this.#generateMine(mines, size)
 		return mines
 	}
 
-	#generateMine(mines) {
-		let mine = this.#aUniqueAndRandomMine(mines)
+	#generateMine(mines, size) {
+		let mine = this.#aUniqueAndRandomMine(mines, size)
 		mines.push(mine)
 	}
 
-	#aUniqueAndRandomMine(generated) {
+	#aUniqueAndRandomMine(generated, { rows, columns }) {
 		let row
 		let column
 		do {
-			row = this.#randomRow()
-			column = this.#randomColumn()
+			row = this.#randomUpTo(rows)
+			column = this.#randomUpTo(columns)
 		} while (
 			generated.some((mine) => mine.row === row && mine.column === column)
 		)
 		return { row, column }
 	}
 
-	#randomRow() {
-		return Math.floor(Math.random() * this.#board.rows) + 1
-	}
-
-	#randomColumn() {
-		return Math.floor(Math.random() * this.#board.columns) + 1
+	#randomUpTo(max) {
+		return Math.floor(Math.random() * max) + 1
 	}
 }

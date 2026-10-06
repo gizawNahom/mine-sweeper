@@ -1,5 +1,7 @@
 import MineGenerator from "mine-sweeper/src/mineGenerator"
 
+const size = { rows: 8, columns: 10 }
+
 let mineGenerator
 
 beforeEach(() => {
@@ -7,7 +9,7 @@ beforeEach(() => {
 })
 
 it("Should generate 10 valid mines", () => {
-	const mines = mineGenerator.generate()
+	const mines = mineGenerator.generate(size)
 
 	expect(mines.length).toBe(10)
 	const valid = validMines(mines)
@@ -15,7 +17,7 @@ it("Should generate 10 valid mines", () => {
 })
 
 it("Should describe each mine by its row and column", () => {
-	mineGenerator.generate().forEach((mine) => {
+	mineGenerator.generate(size).forEach((mine) => {
 		expect(mine).toEqual({ row: expect.any(Number), column: expect.any(Number) })
 	})
 })
@@ -52,7 +54,7 @@ it("Should be able to place mines in every row and column", () => {
 	const rows = new Set()
 	const columns = new Set()
 	for (let i = 0; i < 1000; i++) {
-		mineGenerator.generate().forEach((mine) => {
+		mineGenerator.generate(size).forEach((mine) => {
 			rows.add(rowOf(mine))
 			columns.add(columnOf(mine))
 		})
@@ -62,15 +64,26 @@ it("Should be able to place mines in every row and column", () => {
 	expect([...columns].sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 })
 
+it("Should place mines within the given size", () => {
+	for (let i = 0; i < 100; i++) {
+		mineGenerator.generate({ rows: 3, columns: 4 }).forEach(({ row, column }) => {
+			expect(row).toBeGreaterThanOrEqual(1)
+			expect(row).toBeLessThanOrEqual(3)
+			expect(column).toBeGreaterThanOrEqual(1)
+			expect(column).toBeLessThanOrEqual(4)
+		})
+	}
+})
+
 it("Should generate random mines", () => {
 	assertNoThreeMinesAreEqual(mineGenerator)
 })
 
 function assertNoThreeMinesAreEqual(mg) {
 	for (let i = 0; i < 1000; i++) {
-		const mines1 = mg.generate()
-		const mines2 = mg.generate()
-		const mines3 = mg.generate()
+		const mines1 = mg.generate(size)
+		const mines2 = mg.generate(size)
+		const mines3 = mg.generate(size)
 		expect(mines1).not.toEqual(mines2)
 		expect(mines1).not.toEqual(mines3)
 		expect(mines2).not.toEqual(mines3)

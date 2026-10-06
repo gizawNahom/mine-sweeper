@@ -16,7 +16,10 @@ export default class Game {
 
 		this.#numberOfFlags = NUMBER_OF_MINES
 		this.#numberOfUnrevealedCells = board.numberOfCells
-		this.#mines = mineGenerator.generate()
+		this.#mines = mineGenerator.generate({
+			rows: board.rows,
+			columns: board.columns,
+		})
 	}
 
 	get numberOfFlags() {
