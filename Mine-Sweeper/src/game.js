@@ -1,5 +1,5 @@
-import { NUMBER_OF_MINES, MAX_ROW, MAX_COlUMN } from "./constants.js"
 import Board from "./board.js"
+import gameOptions from "./options.js"
 
 export default class Game {
 	#numberOfMines
@@ -11,11 +11,8 @@ export default class Game {
 
 	#receiver
 
-	constructor(
-		receiver,
-		mineGenerator,
-		{ rows = MAX_ROW, columns = MAX_COlUMN, mines = NUMBER_OF_MINES } = {}
-	) {
+	constructor(receiver, mineGenerator, options) {
+		const { rows, columns, mines } = gameOptions(options)
 		this.#receiver = receiver
 		this.#board = new Board(rows, columns)
 

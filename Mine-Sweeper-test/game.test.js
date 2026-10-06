@@ -461,6 +461,42 @@ describe("Given a game with more than 9 rows and columns", () => {
 	})
 })
 
+describe("Given the game is created with invalid options", () => {
+	test.each([
+		[{ row: 16 }, 'unknown option "row"', TypeError],
+		[{ rows: "8" }, 'rows must be a number, got "8"', TypeError],
+		[{ columns: "10" }, 'columns must be a number, got "10"', TypeError],
+		[{ mines: "10" }, 'mines must be a number, got "10"', TypeError],
+		[{ rows: 0 }, "rows must be a whole number of at least 1, got 0", RangeError],
+		[{ columns: -3 }, "columns must be a whole number of at least 1, got -3", RangeError],
+		[{ rows: 2.5 }, "rows must be a whole number of at least 1, got 2.5", RangeError],
+		[{ columns: NaN }, "columns must be a whole number of at least 1, got NaN", RangeError],
+		[{ rows: 1, columns: 1, mines: 1 }, "a 1x1 board is too small: it needs room for at least 1 mine and 1 safe cell", RangeError],
+		[{ rows: 3, columns: 3, mines: 0 }, "mines must be a whole number from 1 to 8 for a 3x3 board, got 0", RangeError],
+		[{ rows: 3, columns: 3, mines: 9 }, "mines must be a whole number from 1 to 8 for a 3x3 board, got 9", RangeError],
+		[{ rows: 3, columns: 3, mines: 20 }, "mines must be a whole number from 1 to 8 for a 3x3 board, got 20", RangeError],
+		[{ mines: 2.5 }, "mines must be a whole number from 1 to 79 for a 8x10 board, got 2.5", RangeError],
+	])("Then %o must be rejected with: %s", (options, message, ErrorType) => {
+		const create = () => new Game(new ReceiverSpy(), new MineGeneratorSpy([]), options)
+
+		expect(create).toThrow(ErrorType)
+		expect(create).toThrow(message)
+	})
+})
+
+describe("Given the game is created with unusual but valid options", () => {
+	test.each([
+		[{}],
+		[{ rows: 20 }],
+		[{ rows: 1, columns: 2, mines: 1 }],
+		[{ rows: 3, columns: 3, mines: 8 }],
+	])("Then %o must not throw", (options) => {
+		expect(
+			() => new Game(new ReceiverSpy(), new MineGeneratorSpy([]), options)
+		).not.toThrow()
+	})
+})
+
 class ReceiverSpy {
 	flagMessages = []
 	unflagMessages = []
