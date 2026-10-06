@@ -9,7 +9,8 @@ The engine holds the game rules — mine placement, flagging, revealing, flood-f
 
 ## Rules
 
-- The board is **8 rows × 10 columns**, with **10 mines** and **10 flags**.
+- By default the board is **8 rows × 10 columns** with **10 mines**. Rows, columns and mines are configurable.
+- You get one flag per mine.
 - Rows and columns are **1-indexed**.
 - Revealing a cell with no adjacent mines automatically reveals its neighbours.
 - Revealing a mine ends the game. The game is also won (and ended) once every safe cell has been revealed.
@@ -28,7 +29,8 @@ const receiver = {
 	endGame(mines) {},                            // game over; mines is a list of { row, column }
 }
 
-const game = Factory.createGame(receiver)
+const game = Factory.createGame(receiver)                                     // 8×10, 10 mines
+const expert = Factory.createGame(receiver, { rows: 16, columns: 30, mines: 99 })
 
 game.flag(1, 1)
 game.unflag(1, 1)
@@ -36,7 +38,7 @@ game.reveal(4, 5)
 
 game.rows          // 8
 game.columns       // 10
-game.numberOfFlags // flags remaining
+game.numberOfFlags // flags remaining (starts at the number of mines)
 ```
 
 ## Project layout

@@ -1,10 +1,8 @@
-import { MAX_ROW, MAX_COlUMN } from "./constants.js"
-
 export default class Board {
 	#rows
 	#columns
 
-	constructor(rows = MAX_ROW, columns = MAX_COlUMN) {
+	constructor(rows, columns) {
 		this.#rows = rows
 		this.#columns = columns
 	}

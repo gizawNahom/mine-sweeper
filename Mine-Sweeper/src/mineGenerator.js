@@ -1,9 +1,8 @@
-import { NUMBER_OF_MINES } from "./constants.js"
-
 export default class MineGenerator {
-	generate(size) {
+	generate({ rows, columns, mines: numberOfMines }) {
 		const mines = []
-		for (let i = 0; i < NUMBER_OF_MINES; i++) this.#generateMine(mines, size)
+		for (let i = 0; i < numberOfMines; i++)
+			this.#generateMine(mines, { rows, columns })
 		return mines
 	}
 

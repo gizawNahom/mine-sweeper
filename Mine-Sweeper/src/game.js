@@ -1,7 +1,8 @@
-import { NUMBER_OF_MINES } from "./constants.js"
+import { NUMBER_OF_MINES, MAX_ROW, MAX_COlUMN } from "./constants.js"
 import Board from "./board.js"
 
 export default class Game {
+	#numberOfMines
 	#numberOfFlags
 	#cells = {}
 	#numberOfUnrevealedCells
@@ -10,16 +11,18 @@ export default class Game {
 
 	#receiver
 
-	constructor(receiver, mineGenerator, board = new Board()) {
+	constructor(
+		receiver,
+		mineGenerator,
+		{ rows = MAX_ROW, columns = MAX_COlUMN, mines = NUMBER_OF_MINES } = {}
+	) {
 		this.#receiver = receiver
-		this.#board = board
+		this.#board = new Board(rows, columns)
 
-		this.#numberOfFlags = NUMBER_OF_MINES
-		this.#numberOfUnrevealedCells = board.numberOfCells
-		this.#mines = mineGenerator.generate({
-			rows: board.rows,
-			columns: board.columns,
-		})
+		this.#numberOfMines = mines
+		this.#numberOfFlags = mines
+		this.#numberOfUnrevealedCells = this.#board.numberOfCells
+		this.#mines = mineGenerator.generate({ rows, columns, mines })
 	}
 
 	get numberOfFlags() {
@@ -195,7 +198,7 @@ export default class Game {
 	}
 
 	#hasSweepedMines() {
-		return this.#numberOfUnrevealedCells === NUMBER_OF_MINES
+		return this.#numberOfUnrevealedCells === this.#numberOfMines
 	}
 }
 

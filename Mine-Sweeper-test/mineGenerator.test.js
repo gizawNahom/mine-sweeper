@@ -1,6 +1,6 @@
 import MineGenerator from "mine-sweeper/src/mineGenerator"
 
-const size = { rows: 8, columns: 10 }
+const options = { rows: 8, columns: 10, mines: 10 }
 
 let mineGenerator
 
@@ -8,72 +8,56 @@ beforeEach(() => {
 	mineGenerator = new MineGenerator()
 })
 
-it("Should generate 10 valid mines", () => {
-	const mines = mineGenerator.generate(size)
+test.each([
+	{ rows: 8, columns: 10, mines: 10 },
+	{ rows: 3, columns: 4, mines: 5 },
+	{ rows: 16, columns: 30, mines: 99 },
+])("Should generate $mines unique mines within $rows x $columns", (options) => {
+	for (let i = 0; i < 100; i++) {
+		const mines = mineGenerator.generate(options)
 
-	expect(mines.length).toBe(10)
-	const valid = validMines(mines)
-	expect(valid.length).toBe(10)
+		expect(mines).toHaveLength(options.mines)
+		expect(minesOutside(mines, options)).toEqual([])
+		expect(duplicates(mines)).toEqual([])
+	}
 })
 
+function minesOutside(mines, { rows, columns }) {
+	return mines.filter(
+		({ row, column }) => row < 1 || row > rows || column < 1 || column > columns
+	)
+}
+
+function duplicates(mines) {
+	return mines.filter(
+		(mine, i) =>
+			mines.findIndex((m) => m.row === mine.row && m.column === mine.column) !== i
+	)
+}
+
 it("Should describe each mine by its row and column", () => {
-	mineGenerator.generate(size).forEach((mine) => {
+	mineGenerator.generate(options).forEach((mine) => {
 		expect(mine).toEqual({ row: expect.any(Number), column: expect.any(Number) })
 	})
 })
-
-function validMines(mines) {
-	return mines.filter((mine, i, self) => {
-		if (validRow(mine) && validColumn(mine) && unique()) return true
-
-		function unique() {
-			return self.findIndex((m) => m.row === mine.row && m.column === mine.column) === i
-		}
-	})
-}
-
-function validRow(mine) {
-	const row = rowOf(mine)
-	return row >= 1 && row <= 8
-}
-
-function validColumn(mine) {
-	const column = columnOf(mine)
-	return column >= 1 && column <= 10
-}
-
-function rowOf(mine) {
-	return mine.row
-}
-
-function columnOf(mine) {
-	return mine.column
-}
 
 it("Should be able to place mines in every row and column", () => {
 	const rows = new Set()
 	const columns = new Set()
 	for (let i = 0; i < 1000; i++) {
-		mineGenerator.generate(size).forEach((mine) => {
-			rows.add(rowOf(mine))
-			columns.add(columnOf(mine))
+		mineGenerator.generate(options).forEach(({ row, column }) => {
+			rows.add(row)
+			columns.add(column)
 		})
 	}
 
-	expect([...rows].sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
-	expect([...columns].sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+	expect([...rows].sort((a, b) => a - b)).toEqual(oneTo(options.rows))
+	expect([...columns].sort((a, b) => a - b)).toEqual(oneTo(options.columns))
 })
 
-it("Should place mines within the given size", () => {
-	for (let i = 0; i < 100; i++) {
-		mineGenerator.generate({ rows: 3, columns: 4 }).forEach(({ row, column }) => {
-			expect(row).toBeGreaterThanOrEqual(1)
-			expect(row).toBeLessThanOrEqual(3)
-			expect(column).toBeGreaterThanOrEqual(1)
-			expect(column).toBeLessThanOrEqual(4)
-		})
-	}
-})
+function oneTo(n) {
+	return Array.from({ length: n }, (_, i) => i + 1)
+}
 
 it("Should generate random mines", () => {
 	assertNoThreeMinesAreEqual(mineGenerator)
@@ -81,9 +65,9 @@ it("Should generate random mines", () => {
 
 function assertNoThreeMinesAreEqual(mg) {
 	for (let i = 0; i < 1000; i++) {
-		const mines1 = mg.generate(size)
-		const mines2 = mg.generate(size)
-		const mines3 = mg.generate(size)
+		const mines1 = mg.generate(options)
+		const mines2 = mg.generate(options)
+		const mines3 = mg.generate(options)
 		expect(mines1).not.toEqual(mines2)
 		expect(mines1).not.toEqual(mines3)
 		expect(mines2).not.toEqual(mines3)

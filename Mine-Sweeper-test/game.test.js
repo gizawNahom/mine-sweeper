@@ -408,6 +408,59 @@ describe("Given the game has started", () => {
 	}
 })
 
+describe("Given a 3x3 game with one mine in the centre", () => {
+	let g
+	let receiver
+	let mineGenerator
+	beforeEach(() => {
+		receiver = new ReceiverSpy()
+		mineGenerator = new MineGeneratorSpy([{ row: 2, column: 2 }])
+		g = new Game(receiver, mineGenerator, { rows: 3, columns: 3, mines: 1 })
+	})
+
+	test("Then the board must be 3x3 with 1 flag", () => {
+		expect(g.rows).toBe(3)
+		expect(g.columns).toBe(3)
+		expect(g.numberOfFlags).toBe(1)
+	})
+
+	test("Then the mines must be generated for that board", () => {
+		expect(mineGenerator.options).toEqual({ rows: 3, columns: 3, mines: 1 })
+	})
+
+	describe("When the user reveals every unarmed cell", () => {
+		test("Then each must show 1 adjacent mine and the game ends successfully", () => {
+			for (let row = 1; row <= 3; row++) {
+				for (let column = 1; column <= 3; column++) {
+					if (row !== 2 || column !== 2) g.reveal(row, column)
+				}
+			}
+
+			expect(receiver.revealMessages).toHaveLength(8)
+			receiver.revealMessages.forEach((message) =>
+				expect(message).toMatch(/ 1$/)
+			)
+			expect(receiver.endGameMessages).toEqual([[{ row: 2, column: 2 }]])
+		})
+	})
+})
+
+describe("Given a game with more than 9 rows and columns", () => {
+	describe("When the user flags 1,11 and reveals 11,1", () => {
+		test("Then 11,1 must be revealed, since they are different cells", () => {
+			const receiver = new ReceiverSpy()
+			const mineGenerator = new MineGeneratorSpy([{ row: 12, column: 12 }])
+			const g = new Game(receiver, mineGenerator, { rows: 12, columns: 12, mines: 1 })
+			g.flag(1, 11)
+			receiver.clearMessages()
+
+			g.reveal(11, 1)
+
+			expect(receiver.revealMessages[0]).toBe("revealed 11,1 0")
+		})
+	})
+})
+
 class ReceiverSpy {
 	flagMessages = []
 	unflagMessages = []
@@ -454,5 +507,16 @@ class MineGeneratorStub2 {
 			{ row: 1, column: 2 }, { row: 2, column: 1 }, { row: 2, column: 2 }, { row: 2, column: 3 }, { row: 5, column: 5 },
 			{ row: 1, column: 5 }, { row: 3, column: 3 }, { row: 2, column: 7 }, { row: 2, column: 8 }, { row: 2, column: 9 },
 		]
+	}
+}
+
+class MineGeneratorSpy {
+	constructor(mines) {
+		this.mines = mines
+	}
+
+	generate(options) {
+		this.options = options
+		return this.mines
 	}
 }
