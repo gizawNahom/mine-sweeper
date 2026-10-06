@@ -66,6 +66,10 @@ npm run coverage   # run the tests with a coverage report
 
 CI enforces 100% coverage of the engine (`Mine-Sweeper/src`), so the build fails if any code goes untested. Coverage measures which code runs during the tests, not whether it behaves correctly.
 
+## Contributing
+
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to set up, test and submit changes.
+
 ## License
 
 [ISC](LICENSE)
