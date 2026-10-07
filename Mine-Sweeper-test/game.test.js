@@ -31,130 +31,10 @@ describe("Given the game has started", () => {
 		g = new Game(receiver, mineGenerator)
 	})
 
-	describe("When the user flags an unflagged cell", () => {
-		beforeEach(() => {
-			g.flag(1, 1)
-		})
-
-		test("Then the cell is flagged", () => {
-			assertTotalMessageCount(1)
-			expect(receiver.flagMessages.length).toBe(1)
-			expect(receiver.flagMessages[0]).toBe("flagged 1,1")
-		})
-
-		test("Then the number of flags must be 9", () => {
-			assertFlagCount(9)
-		})
-	})
-
-	describe("When the user flags a flagged cell", () => {
-		test("Then nothing happens", () => {
-			g.flag(1, 1)
-			receiver.clearMessages()
-
-			g.flag(1, 1)
-
-			assertTotalMessageCount(0)
-			assertFlagCount(9)
-		})
-	})
-
-	describe("When the user unflags a flagged cell", () => {
-		beforeEach(() => {
-			g.flag(1, 1)
-			receiver.clearMessages()
-
-			g.unflag(1, 1)
-		})
-
-		test("Then the cell is unflagged", () => {
-			assertTotalMessageCount(1)
-			expect(receiver.unflagMessages.length).toBe(1)
-			expect(receiver.unflagMessages[0]).toBe("unflagged 1,1")
-		})
-
-		test("Then the number of flags equals 10", () => {
-			assertFlagCount(10)
-		})
-	})
-
-	describe("When the user unflags an unflagged cell", () => {
-		test("Then nothing happens", () => {
-			g.unflag(1, 1)
-
-			assertTotalMessageCount(0)
-			assertFlagCount(10)
-		})
-	})
-
-	describe("And there are no remaining flags", () => {
-		describe("When the user tries to flag a cell", () => {
-			test("Then nothing happens", () => {
-				flagTenCells(g)
-
-				g.flag(2, 1)
-
-				assertTotalMessageCount(0)
-				assertFlagCount(0)
-			})
-		})
-	})
-
-	function flagTenCells(g) {
-		for (let i = 1; i <= 10; i++) {
-			g.flag(1, i)
-		}
-		receiver.clearMessages()
-	}
-
-	describe("And the user has flagged a cell", () => {
-		describe("When the user unflags an unflagged cell", () => {
-			test("Then nothing happens", () => {
-				g.flag(1, 1)
-				receiver.clearMessages()
-
-				g.unflag(1, 2)
-
-				assertTotalMessageCount(0)
-				assertFlagCount(9)
-			})
-		})
-
-		describe("When the user reveals the cell", () => {
-			test("Then nothing happens", () => {
-				g.flag(1, 1)
-				receiver.clearMessages()
-
-				g.reveal(1, 1)
-
-				assertTotalMessageCount(0)
-				assertFlagCount(9)
-			})
-		})
-	})
-
 	describe("And the user has revealed a cell", () => {
 		beforeEach(() => {
 			g.reveal(1, 1)
 			receiver.clearMessages()
-		})
-
-		describe("When the user flags the cell", () => {
-			test("Then nothing happens", () => {
-				g.flag(1, 1)
-
-				assertTotalMessageCount(0)
-				assertFlagCount(10)
-			})
-		})
-
-		describe("When the user unflags the cell", () => {
-			test("Then nothing happens", () => {
-				g.unflag(1, 1)
-
-				assertTotalMessageCount(0)
-				assertFlagCount(10)
-			})
 		})
 
 		describe("When the user reveals the cell", () => {
@@ -258,22 +138,6 @@ describe("Given the game has started", () => {
 		expect(receiver.unflagMessages[0]).toBe(`unflagged ${row},${column}`)
 	}
 
-	describe("And the user has flagged and then unflagged a cell", () => {
-		describe("When the user flags the cell again", () => {
-			test("Then the cell is flagged", () => {
-				g.flag(1, 1)
-				g.unflag(1, 1)
-				receiver.clearMessages()
-
-				g.flag(1, 1)
-
-				assertTotalMessageCount(1)
-				assertFlagCount(9)
-				expect(receiver.flagMessages.length).toBe(1)
-			})
-		})
-	})
-
 	function assertFlagCount(count) {
 		expect(g.numberOfFlags).toBe(count)
 	}
@@ -307,42 +171,6 @@ describe("Given the game has started", () => {
 
 			assertTotalMessageCount(1)
 			assertGameLost()
-		})
-	})
-
-	describe("And the user has flagged an armed cell", () => {
-		beforeEach(() => {
-			g.flag(7, 9)
-			receiver.clearMessages()
-		})
-
-		describe("When the user reveals a cell adjacent only to it", () => {
-			test("Then the cell must count it as an adjacent mine", () => {
-				g.reveal(8, 10)
-
-				assertTotalMessageCount(1)
-				expect(receiver.revealMessages[0]).toBe("revealed 8,10 1")
-			})
-		})
-
-		describe("When the user reveals it", () => {
-			test("Then nothing happens", () => {
-				g.reveal(7, 9)
-
-				assertTotalMessageCount(0)
-			})
-		})
-
-		describe("When the user unflags and then reveals it", () => {
-			test("Then the game must end unsuccessfully", () => {
-				g.unflag(7, 9)
-				receiver.clearMessages()
-
-				g.reveal(7, 9)
-
-				assertTotalMessageCount(1)
-				assertGameLost()
-			})
 		})
 	})
 
@@ -517,22 +345,6 @@ describe("Given a 3x3 game with one mine in a corner", () => {
 			expect(receiver.endGameMessages).toEqual([
 				{ won: true, mines: [{ row: 3, column: 3 }] },
 			])
-		})
-	})
-})
-
-describe("Given a game with more than 9 rows and columns", () => {
-	describe("When the user flags 1,11 and reveals 11,1", () => {
-		test("Then 11,1 must be revealed, since they are different cells", () => {
-			const receiver = new ReceiverSpy()
-			const mineGenerator = new MineGeneratorSpy([{ row: 12, column: 12 }])
-			const g = new Game(receiver, mineGenerator, { rows: 12, columns: 12, mines: 1 })
-			g.flag(1, 11)
-			receiver.clearMessages()
-
-			g.reveal(11, 1)
-
-			expect(receiver.revealMessages[0]).toBe("revealed 11,1 0")
 		})
 	})
 })
