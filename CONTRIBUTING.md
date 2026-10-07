@@ -50,7 +50,7 @@ CI requires **100% coverage** of the engine, so every change to `Mine-Sweeper/sr
 Match the surrounding code:
 
 - tabs for indentation, no semicolons,
-- small, well-named private methods (`#isMine`, `#revealSafeCell`) over comments,
+- small, well-named private methods (`#isMine`, `#revealArea`) over comments,
 - the engine never talks to a UI directly; it reports changes to the receiver object.
 
 ## Commit messages
