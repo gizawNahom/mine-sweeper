@@ -1,5 +1,6 @@
 import { DEFAULT_ROWS, DEFAULT_COLUMNS, DEFAULT_MINES } from "./constants.js"
 import Board from "./board.js"
+import Minefield from "./minefield.js"
 
 const OPTION_NAMES = ["rows", "columns", "mines"]
 
@@ -7,7 +8,7 @@ export default class Game {
 	#numberOfFlags
 	#cells = {}
 	#numberOfUnrevealedCells
-	#mineCells
+	#minefield
 	#board
 
 	#receiver
@@ -16,13 +17,11 @@ export default class Game {
 	constructor(receiver, mineGenerator, options) {
 		const { rows, columns, mines } = this.#readOptions(options)
 		this.#receiver = receiver
-		this.#board = new Board(rows, columns, this.#countOf(mines))
+		this.#board = new Board(rows, columns)
+		this.#minefield = this.#layMines(mines, mineGenerator)
 
-		this.#numberOfFlags = this.#board.numberOfMines
+		this.#numberOfFlags = this.#minefield.size
 		this.#numberOfUnrevealedCells = this.#board.numberOfCells
-		this.#mineCells = Array.isArray(mines)
-			? this.#placeMines(mines)
-			: mineGenerator.generate({ rows, columns, mines })
 	}
 
 	#readOptions(options = {}) {
@@ -38,34 +37,10 @@ export default class Game {
 		return { rows, columns, mines }
 	}
 
-	#countOf(mines) {
-		return Array.isArray(mines) ? mines.length : mines
-	}
-
-	#placeMines(mines) {
-		const placed = mines.map((mine, index) => this.#placeMine(mine, index))
-		this.#rejectDuplicateMines(placed)
-		return placed
-	}
-
-	#placeMine(mine, index) {
-		const { row, column } = mine ?? {}
-		try {
-			this.#board.assertOnBoard(row, column)
-		} catch (error) {
-			throw new error.constructor(`mines[${index}]: ${error.message}`)
-		}
-		return { row, column }
-	}
-
-	#rejectDuplicateMines(mines) {
-		mines.forEach((mine, index) => {
-			const first = mines.findIndex(
-				(other) => other.row === mine.row && other.column === mine.column
-			)
-			if (first !== index)
-				throw new RangeError(`mines lists ${mine.row},${mine.column} more than once`)
-		})
+	#layMines(mines, mineGenerator) {
+		return Array.isArray(mines)
+			? Minefield.at(this.#board, mines)
+			: Minefield.random(this.#board, mines, mineGenerator)
 	}
 
 	get numberOfFlags() {
@@ -160,7 +135,7 @@ export default class Game {
 		this.#board.assertOnBoard(row, column)
 		if (this.#isOver) return
 		if (!this.#shouldReveal(row, column)) return
-		if (this.#isMine(row, column)) this.#lose()
+		if (this.#minefield.contains(row, column)) this.#lose()
 		else this.#revealArea(row, column)
 	}
 
@@ -172,13 +147,9 @@ export default class Game {
 		return this.#cellState(row, column) === CellState.REVEALED
 	}
 
-	#isMine(row, column) {
-		return this.#mineCells.some((mine) => mine.row === row && mine.column === column)
-	}
-
 	#lose() {
 		this.#isOver = true
-		this.#receiver.endGame({ won: false, mines: this.#mineCells })
+		this.#receiver.endGame({ won: false, mines: this.#minefield.cells })
 	}
 
 	#revealArea(row, column) {
@@ -194,7 +165,7 @@ export default class Game {
 		if (!this.#shouldReveal(row, column)) return []
 		this.#markRevealed(row, column)
 		const adjacentCells = this.#board.adjacentCells(row, column)
-		const numberOfAdjacentMines = this.#countMines(adjacentCells)
+		const numberOfAdjacentMines = this.#minefield.countAmong(adjacentCells)
 		this.#notifyRevealed({ row, column, numberOfAdjacentMines })
 		if (this.#isWon()) this.#win()
 		else if (this.#noAdjacentMines(numberOfAdjacentMines))
@@ -215,11 +186,6 @@ export default class Game {
 		this.#numberOfUnrevealedCells--
 	}
 
-	#countMines(cells) {
-		return cells.filter(({ row, column }) => this.#isMine(row, column))
-			.length
-	}
-
 	#notifyRevealed({ row, column, numberOfAdjacentMines }) {
 		this.#receiver.reveal({
 			row: row,
@@ -229,12 +195,12 @@ export default class Game {
 	}
 
 	#isWon() {
-		return this.#numberOfUnrevealedCells === this.#board.numberOfMines
+		return this.#numberOfUnrevealedCells === this.#minefield.size
 	}
 
 	#win() {
 		this.#isOver = true
-		this.#receiver.endGame({ won: true, mines: this.#mineCells })
+		this.#receiver.endGame({ won: true, mines: this.#minefield.cells })
 	}
 
 	#noAdjacentMines(numberOfAdjacentMines) {
