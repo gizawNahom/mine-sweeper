@@ -16,6 +16,7 @@ The engine holds the game rules — mine placement, flagging, revealing, flood-f
 - Rows and columns are **1-indexed**.
 - Revealing a cell with no adjacent mines automatically reveals its adjacent cells.
 - Revealing a mine ends the game. The game is also won (and ended) once every safe cell has been revealed.
+- Once the game is over, further `reveal`, `flag` and `unflag` calls are ignored (positions off the board still throw).
 
 ## Usage
 

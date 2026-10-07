@@ -390,6 +390,50 @@ describe("Given the game has started", () => {
 		})
 	})
 
+	describe("And the game has been lost", () => {
+		beforeEach(() => {
+			g.flag(5, 5)
+			g.reveal(1, 2)
+			receiver.clearMessages()
+		})
+
+		test.each([
+			["reveal", 4, 4],
+			["reveal", 2, 1],
+			["flag", 6, 6],
+			["unflag", 5, 5],
+		])("When the user calls %s(%i, %i) Then nothing happens", (move, row, column) => {
+			g[move](row, column)
+
+			assertTotalMessageCount(0)
+			assertFlagCount(9)
+		})
+
+		test("When the user plays off the board Then it is still rejected", () => {
+			expect(() => g.reveal(0, 5)).toThrow(RangeError)
+		})
+	})
+
+	describe("And the game has been won", () => {
+		beforeEach(() => {
+			g.flag(1, 2)
+			revealAllUnarmedExceptOne()
+			g.reveal(8, 10)
+			receiver.clearMessages()
+		})
+
+		test.each([
+			["reveal", 2, 1],
+			["flag", 2, 1],
+			["unflag", 1, 2],
+		])("When the user calls %s(%i, %i) Then nothing happens", (move, row, column) => {
+			g[move](row, column)
+
+			assertTotalMessageCount(0)
+			assertFlagCount(9)
+		})
+	})
+
 	function revealAllUnarmedExceptOne() {
 		let toBeRevealed = buildCells()
 			.filter((cell) => !isMine(cell))

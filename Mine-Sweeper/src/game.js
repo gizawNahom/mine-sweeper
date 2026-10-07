@@ -11,6 +11,7 @@ export default class Game {
 	#board
 
 	#receiver
+	#isOver = false
 
 	constructor(receiver, mineGenerator, options) {
 		const { rows, columns, mines } = this.#readOptions(options)
@@ -49,6 +50,7 @@ export default class Game {
 
 	flag(row, column) {
 		this.#board.assertOnBoard(row, column)
+		if (this.#isOver) return
 		if (this.#shouldFlag(row, column)) this.#flagCell(row, column)
 	}
 
@@ -96,6 +98,7 @@ export default class Game {
 
 	unflag(row, column) {
 		this.#board.assertOnBoard(row, column)
+		if (this.#isOver) return
 		if (this.#isFlagged(row, column)) this.#unflagCell(row, column)
 	}
 
@@ -123,6 +126,7 @@ export default class Game {
 
 	reveal(row, column) {
 		this.#board.assertOnBoard(row, column)
+		if (this.#isOver) return
 		if (!this.#shouldReveal(row, column)) return
 		if (this.#isMine(row, column)) this.#lose()
 		else this.#revealArea(row, column)
@@ -141,6 +145,7 @@ export default class Game {
 	}
 
 	#lose() {
+		this.#isOver = true
 		this.#receiver.endGame({ won: false, mines: this.#mineCells })
 	}
 
@@ -196,6 +201,7 @@ export default class Game {
 	}
 
 	#win() {
+		this.#isOver = true
 		this.#receiver.endGame({ won: true, mines: this.#mineCells })
 	}
 
