@@ -9,42 +9,77 @@ A UI-agnostic Minesweeper game engine written in plain JavaScript (ES modules, n
 
 The engine holds the game rules — mine placement, flagging, revealing, flood-fill of empty areas, and win/loss detection — and reports every change to a **receiver** object you provide. That keeps it decoupled from any particular UI: plug in a terminal renderer, a DOM board, or a test spy.
 
-## Rules
-
-- By default the board is **8 rows × 10 columns** with **10 mines**. Rows, columns and mines are configurable.
-- You get one flag per mine.
-- Rows and columns must be whole numbers of at least 1, and mines a whole number from 1 to one less than the number of cells, so there is always at least one safe cell. Invalid or misspelled options throw a `TypeError` or `RangeError` when the game is created.
-- `reveal`, `flag` and `unflag` throw the same way for a position that is not on the board (for example `reveal(0, 5)` or `reveal("13")`); a rejected move changes nothing.
-- Rows and columns are **1-indexed**.
-- Revealing a cell with no adjacent mines automatically reveals its adjacent cells.
-- Revealing a mine ends the game. The game is also won (and ended) once every safe cell has been revealed.
-- Once the game is over, further `reveal`, `flag` and `unflag` calls are ignored (positions off the board still throw).
-
-## Usage
-
-Requires Node.js 18 or later.
+## Quick start
 
 ```js
 import { Factory } from "./Mine-Sweeper/src/index.js"
 
 const receiver = {
-	flag(row, column) {},                         // a cell was flagged
-	unflag(row, column) {},                       // a flag was removed
-	reveal({ row, column, adjacentMines }) {},    // a cell was revealed
-	endGame({ won, mines }) {},                   // game over; won is true or false, mines is a list of { row, column }
+	flag(row, column) { console.log(`flagged ${row},${column}`) },
+	unflag(row, column) { console.log(`unflagged ${row},${column}`) },
+	reveal({ row, column, adjacentMines }) { console.log(`revealed ${row},${column}: ${adjacentMines}`) },
+	endGame({ won, mines }) { console.log(won ? "won" : "lost", mines) },
 }
 
-const game = Factory.createGame(receiver)                                     // 8×10, 10 mines
-const expert = Factory.createGame(receiver, { rows: 16, columns: 30, mines: 99 })
-
+const game = Factory.createGame(receiver)
 game.flag(1, 1)
-game.unflag(1, 1)
 game.reveal(4, 5)
-
-game.rows          // 8
-game.columns       // 10
-game.numberOfFlags // flags remaining (starts at the number of mines)
 ```
+
+The engine is not published to npm yet: copy `Mine-Sweeper/src/` into your project (or import it from this repository, as the demo does). It runs in modern browsers and in Node.js; CI tests it on Node.js 20, 22 and 24.
+
+## How the game plays
+
+- The board has **8 rows × 10 columns** and **10 mines** by default; all three are configurable. Rows and columns are **1-indexed**.
+- **Revealing** a mine loses the game. Revealing a safe cell shows how many mines are adjacent to it; if there are none, its adjacent cells are revealed automatically, which can spread across a whole empty area. Flags on cells revealed this way are removed.
+- **Flagging** marks a hidden cell. You get one flag per mine; with no flags left, flagging does nothing. A flagged cell can't be revealed until it is unflagged, and revealed cells can't be flagged.
+- The game is **won** once every safe cell has been revealed; flagging the mines is not required.
+- Once the game is won or lost, further moves are ignored.
+
+## API
+
+### `Factory.createGame(receiver, options?)`
+
+Creates a new game that reports to `receiver`. `options` is optional, and so is each field in it:
+
+| Option    | Default | Allowed values                                     |
+| --------- | ------- | -------------------------------------------------- |
+| `rows`    | `8`     | a whole number of at least 1                       |
+| `columns` | `10`    | a whole number of at least 1                       |
+| `mines`   | `10`    | a whole number from 1 to `rows × columns − 1`      |
+
+There must be at least one safe cell, so a board needs at least 2 cells. Note that the default of 10 mines does not fit on small boards: `{ rows: 3, columns: 3 }` needs a `mines` value too.
+
+### The game
+
+| Member                  | Description                                              |
+| ----------------------- | -------------------------------------------------------- |
+| `game.reveal(row, column)` | reveals a cell (see [How the game plays](#how-the-game-plays)) |
+| `game.flag(row, column)`   | flags a hidden cell                                     |
+| `game.unflag(row, column)` | removes a flag                                          |
+| `game.rows`             | number of rows                                           |
+| `game.columns`          | number of columns                                        |
+| `game.numberOfFlags`    | flags left to place (starts at the number of mines)     |
+
+### The receiver
+
+The receiver is any object with these four methods; all four are required. The game calls them synchronously, while `reveal`, `flag` or `unflag` is running.
+
+| Method                                 | Called when                                                                                         |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `flag(row, column)`                    | a cell was flagged                                                                                  |
+| `unflag(row, column)`                  | a flag was removed, by `game.unflag` or because the cell was revealed automatically                 |
+| `reveal({ row, column, adjacentMines })` | a cell was revealed. One move can reveal many cells, so expect several calls per `game.reveal`    |
+| `endGame({ won, mines })`              | the game was won or lost (called once). `mines` lists every mine as `{ row, column }`                |
+
+### Errors
+
+Invalid input throws instead of being ignored, and a rejected call changes nothing:
+
+- `Factory.createGame` throws when `options` is invalid: a `TypeError` for unknown option names or non-numbers (`{ row: 16 }`, `{ rows: "8" }`), and a `RangeError` for values out of range (`{ rows: 0 }`, `{ rows: 3, columns: 3, mines: 9 }`).
+- `reveal`, `flag` and `unflag` throw for a position that is not on the board: a `RangeError` for `reveal(0, 5)` or `reveal(9, 1)` on an 8-row board, and a `TypeError` for `reveal("13")`. This applies even after the game is over.
+
+Error messages name the option or coordinate and the value, for example `mines must be a whole number from 1 to 8 for a 3x3 board, got 9`.
 
 ## Project layout
 
