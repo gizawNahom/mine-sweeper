@@ -1,4 +1,4 @@
-import { NUMBER_OF_MINES, MAX_ROW, MAX_COlUMN } from "./constants.js"
+import { DEFAULT_ROWS, DEFAULT_COLUMNS, DEFAULT_MINES } from "./constants.js"
 import Board from "./board.js"
 
 const OPTION_NAMES = ["rows", "columns", "mines"]
@@ -7,7 +7,7 @@ export default class Game {
 	#numberOfFlags
 	#cells = {}
 	#numberOfUnrevealedCells
-	#mines
+	#mineCells
 	#board
 
 	#receiver
@@ -19,7 +19,7 @@ export default class Game {
 
 		this.#numberOfFlags = mines
 		this.#numberOfUnrevealedCells = this.#board.numberOfCells
-		this.#mines = mineGenerator.generate({ rows, columns, mines })
+		this.#mineCells = mineGenerator.generate({ rows, columns, mines })
 	}
 
 	#readOptions(options = {}) {
@@ -28,9 +28,9 @@ export default class Game {
 				throw new TypeError(`unknown option ${JSON.stringify(name)}`)
 		})
 		const {
-			rows = MAX_ROW,
-			columns = MAX_COlUMN,
-			mines = NUMBER_OF_MINES,
+			rows = DEFAULT_ROWS,
+			columns = DEFAULT_COLUMNS,
+			mines = DEFAULT_MINES,
 		} = options
 		return { rows, columns, mines }
 	}
@@ -137,11 +137,11 @@ export default class Game {
 	}
 
 	#isMine(row, column) {
-		return this.#mines.some((mine) => mine.row === row && mine.column === column)
+		return this.#mineCells.some((mine) => mine.row === row && mine.column === column)
 	}
 
 	#endGame() {
-		this.#receiver.endGame(this.#mines)
+		this.#receiver.endGame(this.#mineCells)
 	}
 
 	#revealSafeCell(row, column) {
@@ -200,7 +200,7 @@ export default class Game {
 	}
 
 	#hasSweepedMines() {
-		return this.#numberOfUnrevealedCells === this.#board.mines
+		return this.#numberOfUnrevealedCells === this.#board.numberOfMines
 	}
 
 	#noAdjacentMines(numberOfAdjacentMines) {

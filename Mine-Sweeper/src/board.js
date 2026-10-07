@@ -1,9 +1,9 @@
 export default class Board {
 	#rows
 	#columns
-	#mines
+	#numberOfMines
 
-	constructor(rows, columns, mines) {
+	constructor(rows, columns, numberOfMines) {
 		this.#assertValidSize("rows", rows)
 		this.#assertValidSize("columns", columns)
 		this.#rows = rows
@@ -12,8 +12,8 @@ export default class Board {
 			throw new RangeError(
 				`a ${this.#name} board is too small: it needs room for at least 1 mine and 1 safe cell`
 			)
-		this.#assertValidMineCount(mines)
-		this.#mines = mines
+		this.#assertValidMineCount(numberOfMines)
+		this.#numberOfMines = numberOfMines
 	}
 
 	get rows() {
@@ -28,8 +28,8 @@ export default class Board {
 		return this.#rows * this.#columns
 	}
 
-	get mines() {
-		return this.#mines
+	get numberOfMines() {
+		return this.#numberOfMines
 	}
 
 	get #maxMines() {
@@ -49,11 +49,11 @@ export default class Board {
 		this.#assertWholeNumber(name, value, (value) => value >= 1, "of at least 1")
 	}
 
-	#assertValidMineCount(mines) {
+	#assertValidMineCount(numberOfMines) {
 		const max = this.#maxMines
 		this.#assertWholeNumber(
 			"mines",
-			mines,
+			numberOfMines,
 			(value) => this.#isWithin(value, max),
 			`from 1 to ${max} for a ${this.#name} board`
 		)

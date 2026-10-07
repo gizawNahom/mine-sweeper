@@ -1,14 +1,14 @@
 export default class MineGenerator {
 	generate({ rows, columns, mines: numberOfMines }) {
-		const mines = []
+		const mineCells = []
 		for (let i = 0; i < numberOfMines; i++)
-			this.#generateMine(mines, { rows, columns })
-		return mines
+			this.#generateMine(mineCells, { rows, columns })
+		return mineCells
 	}
 
-	#generateMine(mines, size) {
-		let mine = this.#aUniqueAndRandomMine(mines, size)
-		mines.push(mine)
+	#generateMine(mineCells, size) {
+		let mine = this.#aUniqueAndRandomMine(mineCells, size)
+		mineCells.push(mine)
 	}
 
 	#aUniqueAndRandomMine(generated, { rows, columns }) {
