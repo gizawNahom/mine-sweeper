@@ -28,7 +28,7 @@ const receiver = {
 	flag(row, column) {},                         // a cell was flagged
 	unflag(row, column) {},                       // a flag was removed
 	reveal({ row, column, adjacentMines }) {},    // a cell was revealed
-	endGame(mines) {},                            // game over; mines is a list of { row, column }
+	endGame({ won, mines }) {},                   // game over; won is true or false, mines is a list of { row, column }
 }
 
 const game = Factory.createGame(receiver)                                     // 8×10, 10 mines

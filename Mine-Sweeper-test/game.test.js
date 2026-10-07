@@ -315,7 +315,7 @@ describe("Given the game has started", () => {
 			g.reveal(1, 2)
 
 			assertTotalMessageCount(1)
-			assertEndGame()
+			assertGameLost()
 		})
 	})
 
@@ -350,7 +350,7 @@ describe("Given the game has started", () => {
 				g.reveal(7, 9)
 
 				assertTotalMessageCount(1)
-				assertEndGame()
+				assertGameLost()
 			})
 		})
 	})
@@ -368,7 +368,7 @@ describe("Given the game has started", () => {
 
 				assertTotalMessageCount(2)
 				assertRevealMessageCount(1)
-				assertEndGame()
+				assertGameWon()
 			})
 		})
 	})
@@ -385,7 +385,7 @@ describe("Given the game has started", () => {
 
 				assertTotalMessageCount(2)
 				assertRevealMessageCount(1)
-				assertEndGame()
+				assertGameWon()
 			})
 		})
 	})
@@ -414,11 +414,20 @@ describe("Given the game has started", () => {
 		return cells
 	}
 
-	function assertEndGame() {
+	function assertGameWon() {
+		assertGameEnded({ won: true })
+	}
+
+	function assertGameLost() {
+		assertGameEnded({ won: false })
+	}
+
+	function assertGameEnded({ won }) {
 		expect(receiver.endGameMessages.length).toBe(1)
-		const mines = receiver.endGameMessages[0]
-		expect(mines).toHaveLength(MineGeneratorStub1.mines.length)
-		expect(mines).toEqual(expect.arrayContaining(MineGeneratorStub1.mines))
+		const result = receiver.endGameMessages[0]
+		expect(result.won).toBe(won)
+		expect(result.mines).toHaveLength(MineGeneratorStub1.mines.length)
+		expect(result.mines).toEqual(expect.arrayContaining(MineGeneratorStub1.mines))
 	}
 
 	function assertTotalMessageCount(count) {
@@ -463,7 +472,9 @@ describe("Given a 3x3 game with one mine in the centre", () => {
 			receiver.revealMessages.forEach((message) =>
 				expect(message).toMatch(/ 1$/)
 			)
-			expect(receiver.endGameMessages).toEqual([[{ row: 2, column: 2 }]])
+			expect(receiver.endGameMessages).toEqual([
+				{ won: true, mines: [{ row: 2, column: 2 }] },
+			])
 		})
 	})
 })
@@ -478,7 +489,9 @@ describe("Given a 3x3 game with one mine in a corner", () => {
 			g.reveal(1, 1)
 
 			expect(receiver.revealMessages).toHaveLength(8)
-			expect(receiver.endGameMessages).toEqual([[{ row: 3, column: 3 }]])
+			expect(receiver.endGameMessages).toEqual([
+				{ won: true, mines: [{ row: 3, column: 3 }] },
+			])
 		})
 	})
 })
@@ -509,7 +522,9 @@ describe("Given a large board with a single mine", () => {
 			g.reveal(1, 1)
 
 			expect(receiver.revealMessages).toHaveLength(9999)
-			expect(receiver.endGameMessages).toEqual([[{ row: 100, column: 100 }]])
+			expect(receiver.endGameMessages).toEqual([
+				{ won: true, mines: [{ row: 100, column: 100 }] },
+			])
 		})
 	})
 })
@@ -568,8 +583,8 @@ class ReceiverSpy {
 		this.revealMessages.push(`revealed ${row},${column} ${adjacentMines}`)
 	}
 
-	endGame(mines) {
-		this.endGameMessages.push(mines)
+	endGame(result) {
+		this.endGameMessages.push(result)
 	}
 
 	clearMessages() {

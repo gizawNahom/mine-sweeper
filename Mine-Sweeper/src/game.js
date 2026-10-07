@@ -124,7 +124,7 @@ export default class Game {
 	reveal(row, column) {
 		this.#board.assertOnBoard(row, column)
 		if (!this.#shouldReveal(row, column)) return
-		if (this.#isMine(row, column)) this.#endGame()
+		if (this.#isMine(row, column)) this.#lose()
 		else this.#revealArea(row, column)
 	}
 
@@ -140,8 +140,8 @@ export default class Game {
 		return this.#mineCells.some((mine) => mine.row === row && mine.column === column)
 	}
 
-	#endGame() {
-		this.#receiver.endGame(this.#mineCells)
+	#lose() {
+		this.#receiver.endGame({ won: false, mines: this.#mineCells })
 	}
 
 	#revealArea(row, column) {
@@ -159,7 +159,7 @@ export default class Game {
 		const adjacentCells = this.#board.adjacentCells(row, column)
 		const numberOfAdjacentMines = this.#countMines(adjacentCells)
 		this.#notifyRevealed({ row, column, numberOfAdjacentMines })
-		if (this.#isWon()) this.#endGame()
+		if (this.#isWon()) this.#win()
 		else if (this.#noAdjacentMines(numberOfAdjacentMines))
 			return this.#unrevealedAdjacentCells(adjacentCells)
 		return []
@@ -193,6 +193,10 @@ export default class Game {
 
 	#isWon() {
 		return this.#numberOfUnrevealedCells === this.#board.numberOfMines
+	}
+
+	#win() {
+		this.#receiver.endGame({ won: true, mines: this.#mineCells })
 	}
 
 	#noAdjacentMines(numberOfAdjacentMines) {

@@ -17,7 +17,7 @@ test("factory creates an 8x10 game with 10 mines by default", () => {
 test("factory creates a game with the given rows, columns and mines", () => {
 	let mines
 	const game = Factory.createGame(
-		{ reveal() {}, endGame: (m) => (mines = m) },
+		{ reveal() {}, endGame: (result) => (mines = result.mines) },
 		{ rows: 16, columns: 30, mines: 99 }
 	)
 
