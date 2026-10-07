@@ -116,7 +116,6 @@ export default class Game {
 		this.#changeStateToRevealed(row, column)
 		this.#decrementNumberOfUnrevealed()
 		this.#revealCell(row, column)
-		if (this.#hasSweepedMines()) this.#endGame()
 	}
 
 	#endGame() {
@@ -151,7 +150,8 @@ export default class Game {
 			column,
 			numberOfAdjacentMines,
 		})
-		if (this.#noAdjacentMines(numberOfAdjacentMines))
+		if (this.#hasSweepedMines()) this.#endGame()
+		else if (this.#noAdjacentMines(numberOfAdjacentMines))
 			this.#revealUnrevealedAdjacents(adjacents)
 	}
 

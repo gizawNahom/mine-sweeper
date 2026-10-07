@@ -468,6 +468,21 @@ describe("Given a 3x3 game with one mine in the centre", () => {
 	})
 })
 
+describe("Given a 3x3 game with one mine in a corner", () => {
+	describe("When the user reveals the opposite corner", () => {
+		test("Then the revealed area wins the game and it ends only once", () => {
+			const receiver = new ReceiverSpy()
+			const mineGenerator = new MineGeneratorSpy([{ row: 3, column: 3 }])
+			const g = new Game(receiver, mineGenerator, { rows: 3, columns: 3, mines: 1 })
+
+			g.reveal(1, 1)
+
+			expect(receiver.revealMessages).toHaveLength(8)
+			expect(receiver.endGameMessages).toEqual([[{ row: 3, column: 3 }]])
+		})
+	})
+})
+
 describe("Given a game with more than 9 rows and columns", () => {
 	describe("When the user flags 1,11 and reveals 11,1", () => {
 		test("Then 11,1 must be revealed, since they are different cells", () => {
