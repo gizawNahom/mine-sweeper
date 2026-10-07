@@ -1,24 +1,13 @@
 import { Factory } from "mine-sweeper"
-import { board } from "./support/boards"
+import { MINE_FIELD_1 } from "./support/mineFields"
 import ReceiverRecorder from "./support/receiverRecorder"
-
-const MINE_FIELD = board`
-	. * . . . . . . . .
-	* * * . . . * * * .
-	. . . . . . . . . .
-	. . . . . . . . . .
-	. . . . . . . . . .
-	. . . . . . . . . .
-	* * . . . . . . * .
-	. . . . . . . . . .
-`
 
 describe("Given a new game", () => {
 	let game
 	let receiver
 	beforeEach(() => {
 		receiver = new ReceiverRecorder()
-		game = Factory.createGame(receiver, MINE_FIELD)
+		game = Factory.createGame(receiver, MINE_FIELD_1)
 	})
 
 	describe("When the user flags a hidden cell", () => {
@@ -179,7 +168,7 @@ describe("Given a new game", () => {
 
 				game.reveal(7, 9)
 
-				expect(receiver.calls).toEqual([["endGame", { won: false, mines: MINE_FIELD.mines }]])
+				expect(receiver.calls).toEqual([["endGame", { won: false, mines: MINE_FIELD_1.mines }]])
 			})
 		})
 	})

@@ -10,16 +10,6 @@ import Game from "mine-sweeper/src/game"
 	61 62 63 64 65 66 67 68 69 610
 	** ** 73 74 75 76 77 78 ** 710
 	81 82 83 84 85 86 87 88 89 810
-
-	MINE FIELD 2
-	11 ** 13 14 ** 16 17 18 19 110
-	** ** ** 24 25 26 ** ** ** 210
-	31 32 ** 34 35 36 37 38 39 310
-	41 42 43 44 45 46 47 48 49 410
-	51 52 53 54 ** 56 57 58 59 510
-	61 62 63 64 65 66 67 68 69 610
-	71 72 73 74 75 76 77 78 79 710
-	81 82 83 84 85 86 87 88 89 810
 */
 
 describe("Given the game has started", () => {
@@ -30,113 +20,6 @@ describe("Given the game has started", () => {
 		let mineGenerator = new MineGeneratorStub1()
 		g = new Game(receiver, mineGenerator)
 	})
-
-	describe("And the user has revealed a cell", () => {
-		beforeEach(() => {
-			g.reveal(1, 1)
-			receiver.clearMessages()
-		})
-
-		describe("When the user reveals the cell", () => {
-			test("Then nothing happens", () => {
-				g.reveal(1, 1)
-
-				assertTotalMessageCount(0)
-			})
-		})
-	})
-
-	describe("And the user has revealed the cell on the top-left", () => {
-		test("Then the cell must show the number of mines on the adjacent 3 cells", () => {
-			g.reveal(1, 1)
-
-			assertTotalMessageCount(1)
-			assertOneReveal("1,1", 3)
-		})
-	})
-
-	describe("And the user has revealed the cell on the top-right", () => {
-		test("Then the cell must show the number of mines on the adjacent 3 cells", () => {
-			g.reveal(1, 10)
-
-			assertTotalMessageCount(1)
-			assertOneReveal("1,10", 1)
-		})
-	})
-
-	describe("And the user has revealed a cell on the bottom-left", () => {
-		test("Then the cell must show the number of mines on the adjacent 3 cells", () => {
-			g.reveal(8, 1)
-
-			assertTotalMessageCount(1)
-			assertOneReveal("8,1", 2)
-		})
-	})
-
-	describe("And the user has revealed a cell on the bottom-right", () => {
-		test("Then the cell must show the number of mines on the adjacent 3 cells", () => {
-			g.reveal(8, 10)
-
-			assertTotalMessageCount(1)
-			assertOneReveal("8,10", 1)
-		})
-	})
-
-	describe("And the user has revealed a cell on the center", () => {
-		test("Then the cell must show the number of mines on the adjacent 8 cells", () => {
-			g.reveal(2, 6)
-
-			assertTotalMessageCount(1)
-			assertOneReveal("2,6", 1)
-		})
-	})
-
-	function assertOneReveal(cell, mines) {
-		assertRevealMessageCount(1)
-		expect(receiver.revealMessages[0]).toBe(`revealed ${cell} ${mines}`)
-	}
-
-	describe("And the user has revealed a cell with zero adjacent mines", () => {
-		beforeEach(() => {
-			const generator = new MineGeneratorStub2()
-			let g = new Game(receiver, generator)
-			g.flag(2, 6)
-			g.reveal(2, 4)
-			receiver.clearMessages()
-
-			g.reveal(3, 5)
-		})
-
-		test("Then all unrevealed adjacent cells must be revealed", () => {
-			assertTotalMessageCount(9)
-			assertRevealMessageCount(8)
-		})
-
-		describe("Given one of the adjacent cells is flagged", () => {
-			test("Then the cell must be unflagged before it's revealed", () => {
-				assertUnflag(2, 6)
-			})
-		})
-
-		describe("And given it has one or more adjacent cells with 0 adjacent mines", () => {
-			test("Then the unrevealed adjacent cells of those cells must be revealed", () => {
-				g.reveal(3, 7)
-				g.flag(3, 8)
-				receiver.clearMessages()
-
-				g.reveal(3, 5)
-
-				assertTotalMessageCount(58)
-				assertRevealMessageCount(57)
-				assertUnflag(3, 8)
-			})
-		})
-	})
-
-	function assertUnflag(row, column) {
-		expect(receiver.unflagMessages.length).toBe(1)
-		expect(receiver.unflagMessages[0]).toBe(`unflagged ${row},${column}`)
-	}
 
 	function assertFlagCount(count) {
 		expect(g.numberOfFlags).toBe(count)
@@ -403,15 +286,6 @@ class MineGeneratorStub1 {
 	]
 	generate() {
 		return MineGeneratorStub1.mines
-	}
-}
-
-class MineGeneratorStub2 {
-	generate() {
-		return [
-			{ row: 1, column: 2 }, { row: 2, column: 1 }, { row: 2, column: 2 }, { row: 2, column: 3 }, { row: 5, column: 5 },
-			{ row: 1, column: 5 }, { row: 3, column: 3 }, { row: 2, column: 7 }, { row: 2, column: 8 }, { row: 2, column: 9 },
-		]
 	}
 }
 
