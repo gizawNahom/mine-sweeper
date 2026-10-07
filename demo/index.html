@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Mine-Sweeper demo</title>
+		<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💣</text></svg>" />
+		<link rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+		<header>
+			<h1>Mine-Sweeper</h1>
+			<p>
+				A sample UI for the
+				<a href="https://github.com/gizawNahom/mine-sweeper">mine-sweeper engine</a>.
+				Left click reveals, right click flags.
+			</p>
+		</header>
+
+		<section class="controls" aria-label="Game controls">
+			<label>
+				Difficulty
+				<select id="difficulty">
+					<option value="default">Default (8×10, 10 mines)</option>
+					<option value="beginner">Beginner (9×9, 10 mines)</option>
+					<option value="intermediate">Intermediate (16×16, 40 mines)</option>
+					<option value="expert">Expert (16×30, 99 mines)</option>
+				</select>
+			</label>
+			<button id="new-game" type="button">New game</button>
+			<button id="flag-mode" type="button" aria-pressed="false">🚩 Flag mode</button>
+		</section>
+
+		<p class="status">
+			<span>Flags left: <strong id="flags-left"></strong></span>
+			<span id="result" aria-live="polite"></span>
+		</p>
+
+		<div class="board-scroller">
+			<div id="board" aria-label="Minefield"></div>
+		</div>
+
+		<script type="module" src="main.js"></script>
+	</body>
+</html>
