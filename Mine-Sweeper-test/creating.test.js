@@ -1,5 +1,6 @@
 import { Factory } from "mine-sweeper"
 import { board } from "./support/boards"
+import { playUntilGameEnds, revealUntilGameEnds } from "./support/playing"
 import ReceiverRecorder from "./support/receiverRecorder"
 
 describe("Given no options", () => {
@@ -139,16 +140,3 @@ describe("Given an invalid list of mines", () => {
 		expect(create).toThrow(message)
 	})
 })
-
-function playUntilGameEnds(options) {
-	const receiver = new ReceiverRecorder()
-	revealUntilGameEnds(Factory.createGame(receiver, options), receiver)
-	return receiver.callsTo("endGame")[0]
-}
-
-function revealUntilGameEnds(game, receiver) {
-	const ended = () => receiver.callsTo("endGame").length > 0
-	for (let row = 1; row <= game.rows && !ended(); row++)
-		for (let column = 1; column <= game.columns && !ended(); column++)
-			game.reveal(row, column)
-}
