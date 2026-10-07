@@ -46,9 +46,15 @@ Creates a new game that reports to `receiver`. `options` is optional, and so is 
 | --------- | ------- | -------------------------------------------------- |
 | `rows`    | `8`     | a whole number of at least 1                       |
 | `columns` | `10`    | a whole number of at least 1                       |
-| `mines`   | `10`    | a whole number from 1 to `rows × columns − 1`      |
+| `mines`   | `10`    | a whole number from 1 to `rows × columns − 1`, placed at random, **or** a list of `{ row, column }` positions (same length limits, each on the board, no duplicates) |
 
 There must be at least one safe cell, so a board needs at least 2 cells. Note that the default of 10 mines does not fit on small boards: `{ rows: 3, columns: 3 }` needs a `mines` value too.
+
+Listing the positions gives you a fixed board, for puzzles, tests or bug reports. Since `endGame` reports the mines in the same shape, you can replay a finished board:
+
+```js
+const replay = Factory.createGame(receiver, { rows: 8, columns: 10, mines: result.mines })
+```
 
 ### The game
 

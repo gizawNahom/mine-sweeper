@@ -16,11 +16,13 @@ export default class Game {
 	constructor(receiver, mineGenerator, options) {
 		const { rows, columns, mines } = this.#readOptions(options)
 		this.#receiver = receiver
-		this.#board = new Board(rows, columns, mines)
+		this.#board = new Board(rows, columns, this.#countOf(mines))
 
-		this.#numberOfFlags = mines
+		this.#numberOfFlags = this.#board.numberOfMines
 		this.#numberOfUnrevealedCells = this.#board.numberOfCells
-		this.#mineCells = mineGenerator.generate({ rows, columns, mines })
+		this.#mineCells = Array.isArray(mines)
+			? this.#placeMines(mines)
+			: mineGenerator.generate({ rows, columns, mines })
 	}
 
 	#readOptions(options = {}) {
@@ -34,6 +36,36 @@ export default class Game {
 			mines = DEFAULT_MINES,
 		} = options
 		return { rows, columns, mines }
+	}
+
+	#countOf(mines) {
+		return Array.isArray(mines) ? mines.length : mines
+	}
+
+	#placeMines(mines) {
+		const placed = mines.map((mine, index) => this.#placeMine(mine, index))
+		this.#rejectDuplicateMines(placed)
+		return placed
+	}
+
+	#placeMine(mine, index) {
+		const { row, column } = mine ?? {}
+		try {
+			this.#board.assertOnBoard(row, column)
+		} catch (error) {
+			throw new error.constructor(`mines[${index}]: ${error.message}`)
+		}
+		return { row, column }
+	}
+
+	#rejectDuplicateMines(mines) {
+		mines.forEach((mine, index) => {
+			const first = mines.findIndex(
+				(other) => other.row === mine.row && other.column === mine.column
+			)
+			if (first !== index)
+				throw new RangeError(`mines lists ${mine.row},${mine.column} more than once`)
+		})
 	}
 
 	get numberOfFlags() {
