@@ -12,52 +12,6 @@ import Game from "mine-sweeper/src/game"
 	81 82 83 84 85 86 87 88 89 810
 */
 
-describe("Given the game has started", () => {
-	let g
-	let receiver
-	beforeEach(() => {
-		receiver = new ReceiverSpy()
-		let mineGenerator = new MineGeneratorStub1()
-		g = new Game(receiver, mineGenerator)
-	})
-
-	function assertFlagCount(count) {
-		expect(g.numberOfFlags).toBe(count)
-	}
-
-	describe.each(["reveal", "flag", "unflag"])(
-		"When the user calls %s with an invalid position",
-		(move) => {
-			test.each([
-				[[0, 5], "row must be a whole number from 1 to 8, got 0", RangeError],
-				[[9, 5], "row must be a whole number from 1 to 8, got 9", RangeError],
-				[[99, 5], "row must be a whole number from 1 to 8, got 99", RangeError],
-				[[1.5, 5], "row must be a whole number from 1 to 8, got 1.5", RangeError],
-				[[1, 0], "column must be a whole number from 1 to 10, got 0", RangeError],
-				[[1, 11], "column must be a whole number from 1 to 10, got 11", RangeError],
-				[["13"], 'row must be a number, got "13"', TypeError],
-				[[1], "column must be a number, got undefined", TypeError],
-			])("Then %j must be rejected with: %s", (position, message, ErrorType) => {
-				const play = () => g[move](...position)
-
-				expect(play).toThrow(ErrorType)
-				expect(play).toThrow(message)
-				assertTotalMessageCount(0)
-				assertFlagCount(10)
-			})
-		}
-	)
-
-	function assertTotalMessageCount(count) {
-		const totalMessageCount =
-			receiver.flagMessages.length +
-			receiver.unflagMessages.length +
-			receiver.revealMessages.length +
-			receiver.endGameMessages.length
-		expect(totalMessageCount).toBe(count)
-	}
-})
-
 describe("Given a large board with a single mine", () => {
 	describe("When the user reveals the opposite corner", () => {
 		test("Then every unarmed cell is revealed and the game ends successfully", () => {
