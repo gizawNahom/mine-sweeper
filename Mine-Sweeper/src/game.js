@@ -124,7 +124,7 @@ export default class Game {
 	reveal(row, column) {
 		this.#board.assertOnBoard(row, column)
 		if (!this.#shouldReveal(row, column)) return
-		if (this.#isCellArmed(row, column)) this.#endGame()
+		if (this.#isMine(row, column)) this.#endGame()
 		else this.#revealSafeCell(row, column)
 	}
 
@@ -136,7 +136,7 @@ export default class Game {
 		return this.#cellState(row, column) === CellState.REVEALED
 	}
 
-	#isCellArmed(row, column) {
+	#isMine(row, column) {
 		return this.#mines.some((mine) => mine.row === row && mine.column === column)
 	}
 
@@ -169,8 +169,8 @@ export default class Game {
 	}
 
 	#revealCell(row, column) {
-		const adjacents = this.#board.adjacents(row, column)
-		const numberOfAdjacentMines = this.#numberOfAdjacentMines(adjacents)
+		const adjacentCells = this.#board.adjacentCells(row, column)
+		const numberOfAdjacentMines = this.#numberOfAdjacentMines(adjacentCells)
 		this.#notifyRevealed({
 			row,
 			column,
@@ -178,16 +178,16 @@ export default class Game {
 		})
 		if (this.#hasSweepedMines()) this.#endGame()
 		else if (this.#noAdjacentMines(numberOfAdjacentMines))
-			return this.#unrevealedAdjacents(adjacents)
+			return this.#unrevealedAdjacentCells(adjacentCells)
 		return []
 	}
 
-	#numberOfAdjacentMines(adjacents) {
-		return this.#countArmed(adjacents)
+	#numberOfAdjacentMines(adjacentCells) {
+		return this.#countMines(adjacentCells)
 	}
 
-	#countArmed(cells) {
-		return cells.filter(({ row, column }) => this.#isCellArmed(row, column))
+	#countMines(cells) {
+		return cells.filter(({ row, column }) => this.#isMine(row, column))
 			.length
 	}
 
@@ -207,8 +207,8 @@ export default class Game {
 		return numberOfAdjacentMines == 0
 	}
 
-	#unrevealedAdjacents(adjacents) {
-		return adjacents.filter(
+	#unrevealedAdjacentCells(adjacentCells) {
+		return adjacentCells.filter(
 			({ row, column }) => !this.#isCellRevealed(row, column)
 		)
 	}

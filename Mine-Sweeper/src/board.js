@@ -81,13 +81,13 @@ export default class Board {
 		return typeof value === "string" ? JSON.stringify(value) : String(value)
 	}
 
-	adjacents(row, column) {
-		return this.#allAdjacents(row, column).filter(({ row, column }) =>
+	adjacentCells(row, column) {
+		return this.#allAdjacentCells(row, column).filter(({ row, column }) =>
 			this.#contains(row, column)
 		)
 	}
 
-	#allAdjacents(row, column) {
+	#allAdjacentCells(row, column) {
 		const rightCell = { row, column: column + 1 }
 		const bottomRightCell = { row: row + 1, column: column + 1 }
 		const bottomCell = { row: row + 1, column }
