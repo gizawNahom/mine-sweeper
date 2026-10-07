@@ -4,15 +4,15 @@ export default class Board {
 	#mines
 
 	constructor(rows, columns, mines) {
-		this.#checkSize("rows", rows)
-		this.#checkSize("columns", columns)
+		this.#assertValidSize("rows", rows)
+		this.#assertValidSize("columns", columns)
 		this.#rows = rows
 		this.#columns = columns
 		if (this.#maxMines < 1)
 			throw new RangeError(
 				`a ${this.#name} board is too small: it needs room for at least 1 mine and 1 safe cell`
 			)
-		this.#checkMines(mines)
+		this.#assertValidMineCount(mines)
 		this.#mines = mines
 	}
 
@@ -40,18 +40,18 @@ export default class Board {
 		return `${this.#rows}x${this.#columns}`
 	}
 
-	checkCell(row, column) {
-		this.#checkCoordinate("row", row, this.#rows)
-		this.#checkCoordinate("column", column, this.#columns)
+	assertOnBoard(row, column) {
+		this.#assertValidCoordinate("row", row, this.#rows)
+		this.#assertValidCoordinate("column", column, this.#columns)
 	}
 
-	#checkSize(name, value) {
-		this.#checkWholeNumber(name, value, (value) => value >= 1, "of at least 1")
+	#assertValidSize(name, value) {
+		this.#assertWholeNumber(name, value, (value) => value >= 1, "of at least 1")
 	}
 
-	#checkMines(mines) {
+	#assertValidMineCount(mines) {
 		const max = this.#maxMines
-		this.#checkWholeNumber(
+		this.#assertWholeNumber(
 			"mines",
 			mines,
 			(value) => this.#isWithin(value, max),
@@ -59,8 +59,8 @@ export default class Board {
 		)
 	}
 
-	#checkCoordinate(name, value, max) {
-		this.#checkWholeNumber(
+	#assertValidCoordinate(name, value, max) {
+		this.#assertWholeNumber(
 			name,
 			value,
 			(value) => this.#isWithin(value, max),
@@ -68,7 +68,7 @@ export default class Board {
 		)
 	}
 
-	#checkWholeNumber(name, value, isAllowed, allowed) {
+	#assertWholeNumber(name, value, isAllowed, allowed) {
 		if (typeof value !== "number")
 			throw new TypeError(`${name} must be a number, got ${this.#show(value)}`)
 		if (!Number.isInteger(value) || !isAllowed(value))
