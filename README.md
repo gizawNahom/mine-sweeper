@@ -26,7 +26,7 @@ game.flag(1, 1)
 game.reveal(4, 5)
 ```
 
-The engine is not published to npm yet: copy `Mine-Sweeper/src/` into your project (or import it from this repository, as the demo does). It runs in modern browsers and in Node.js; CI tests it on Node.js 20, 22 and 24.
+The engine is not published to npm yet: copy `Mine-Sweeper/src/` into your project (or import it from this repository, as the demo does). It runs in modern browsers and in Node.js; CI tests it on Node.js 22, 24 and 26.
 
 ## How the game plays
 

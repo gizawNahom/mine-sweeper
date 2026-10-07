@@ -14,7 +14,7 @@ A failing test case is the best bug report.
 
 ## Setup
 
-You need Node.js 20 or later.
+You need Node.js 22 or later.
 
 ```sh
 cd Mine-Sweeper-test
@@ -71,5 +71,5 @@ Example: `fix: detect the win when mines are flagged`
 ## Pull requests
 
 - Keep each pull request focused on one change.
-- Make sure `npm run coverage` passes locally; CI runs the same check on Node 20, 22 and 24.
+- Make sure `npm run coverage` passes locally; CI runs the same check on Node 22, 24 and 26.
 - Describe what changed and why, and link the issue if there is one.
