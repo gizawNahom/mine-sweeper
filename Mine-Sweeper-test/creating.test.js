@@ -2,6 +2,30 @@ import { Factory } from "mine-sweeper"
 import { board } from "./support/boards"
 import ReceiverRecorder from "./support/receiverRecorder"
 
+describe("Given no options", () => {
+	test("Then the board is 8x10 with 10 flags", () => {
+		const game = Factory.createGame(new ReceiverRecorder())
+
+		expect(game.rows).toBe(8)
+		expect(game.columns).toBe(10)
+		expect(game.numberOfFlags).toBe(10)
+	})
+})
+
+describe("Given 16 rows, 30 columns and 99 mines", () => {
+	test("Then the board has that size, 99 flags and 99 mines", () => {
+		const receiver = new ReceiverRecorder()
+		const game = Factory.createGame(receiver, { rows: 16, columns: 30, mines: 99 })
+
+		revealUntilGameEnds(game, receiver)
+
+		expect(game.rows).toBe(16)
+		expect(game.columns).toBe(30)
+		expect(game.numberOfFlags).toBe(99)
+		expect(receiver.callsTo("endGame")[0].mines).toHaveLength(99)
+	})
+})
+
 describe("Given the mines are given as a list of positions", () => {
 	let receiver
 	let game
@@ -12,6 +36,11 @@ describe("Given the mines are given as a list of positions", () => {
 			. . .
 			. . .
 		`)
+	})
+
+	test("Then the board has the drawn size", () => {
+		expect(game.rows).toBe(3)
+		expect(game.columns).toBe(3)
 	})
 
 	test("Then there is one flag per listed mine", () => {
@@ -55,6 +84,40 @@ describe("Given the list of mines is changed after the game is created", () => {
 	})
 })
 
+describe("Given invalid options", () => {
+	test.each([
+		[{ row: 16 }, 'unknown option "row"', TypeError],
+		[{ rows: "8" }, 'rows must be a number, got "8"', TypeError],
+		[{ columns: "10" }, 'columns must be a number, got "10"', TypeError],
+		[{ mines: "10" }, 'mines must be a number, got "10"', TypeError],
+		[{ rows: 0 }, "rows must be a whole number of at least 1, got 0", RangeError],
+		[{ columns: -3 }, "columns must be a whole number of at least 1, got -3", RangeError],
+		[{ rows: 2.5 }, "rows must be a whole number of at least 1, got 2.5", RangeError],
+		[{ columns: NaN }, "columns must be a whole number of at least 1, got NaN", RangeError],
+		[{ rows: 1, columns: 1, mines: 1 }, "a 1x1 board is too small: it needs room for at least 1 mine and 1 safe cell", RangeError],
+		[{ rows: 3, columns: 3, mines: 0 }, "mines must be a whole number from 1 to 8 for a 3x3 board, got 0", RangeError],
+		[{ rows: 3, columns: 3, mines: 9 }, "mines must be a whole number from 1 to 8 for a 3x3 board, got 9", RangeError],
+		[{ rows: 3, columns: 3, mines: 20 }, "mines must be a whole number from 1 to 8 for a 3x3 board, got 20", RangeError],
+		[{ mines: 2.5 }, "mines must be a whole number from 1 to 79 for a 8x10 board, got 2.5", RangeError],
+	])("Then %o must be rejected with: %s", (options, message, ErrorType) => {
+		const create = () => Factory.createGame(new ReceiverRecorder(), options)
+
+		expect(create).toThrow(ErrorType)
+		expect(create).toThrow(message)
+	})
+})
+
+describe("Given unusual but valid options", () => {
+	test.each([
+		[{}],
+		[{ rows: 20 }],
+		[{ rows: 1, columns: 2, mines: 1 }],
+		[{ rows: 3, columns: 3, mines: 8 }],
+	])("Then %o must not throw", (options) => {
+		expect(() => Factory.createGame(new ReceiverRecorder(), options)).not.toThrow()
+	})
+})
+
 describe("Given an invalid list of mines", () => {
 	test.each([
 		[[], "mines must be a whole number from 1 to 8 for a 3x3 board, got 0", RangeError],
@@ -79,10 +142,13 @@ describe("Given an invalid list of mines", () => {
 
 function playUntilGameEnds(options) {
 	const receiver = new ReceiverRecorder()
-	const game = Factory.createGame(receiver, options)
+	revealUntilGameEnds(Factory.createGame(receiver, options), receiver)
+	return receiver.callsTo("endGame")[0]
+}
+
+function revealUntilGameEnds(game, receiver) {
 	const ended = () => receiver.callsTo("endGame").length > 0
 	for (let row = 1; row <= game.rows && !ended(); row++)
 		for (let column = 1; column <= game.columns && !ended(); column++)
 			game.reveal(row, column)
-	return receiver.callsTo("endGame")[0]
 }
