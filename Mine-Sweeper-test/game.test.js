@@ -499,6 +499,21 @@ describe("Given a game with more than 9 rows and columns", () => {
 	})
 })
 
+describe("Given a large board with a single mine", () => {
+	describe("When the user reveals the opposite corner", () => {
+		test("Then every unarmed cell is revealed and the game ends successfully", () => {
+			const receiver = new ReceiverSpy()
+			const mineGenerator = new MineGeneratorSpy([{ row: 100, column: 100 }])
+			const g = new Game(receiver, mineGenerator, { rows: 100, columns: 100, mines: 1 })
+
+			g.reveal(1, 1)
+
+			expect(receiver.revealMessages).toHaveLength(9999)
+			expect(receiver.endGameMessages).toEqual([[{ row: 100, column: 100 }]])
+		})
+	})
+})
+
 describe("Given the game is created with invalid options", () => {
 	test.each([
 		[{ row: 16 }, 'unknown option "row"', TypeError],

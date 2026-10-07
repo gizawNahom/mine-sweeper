@@ -113,9 +113,19 @@ export default class Game {
 	}
 
 	#revealSafeCell(row, column) {
+		const pending = [{ row, column }]
+		while (pending.length > 0) {
+			const next = this.#revealPendingCell(pending.pop())
+			pending.push(...next.reverse())
+		}
+	}
+
+	#revealPendingCell({ row, column }) {
+		this.unflag(row, column)
+		if (!this.#shouldReveal(row, column)) return []
 		this.#changeStateToRevealed(row, column)
 		this.#decrementNumberOfUnrevealed()
-		this.#revealCell(row, column)
+		return this.#revealCell(row, column)
 	}
 
 	#endGame() {
@@ -152,7 +162,8 @@ export default class Game {
 		})
 		if (this.#hasSweepedMines()) this.#endGame()
 		else if (this.#noAdjacentMines(numberOfAdjacentMines))
-			this.#revealUnrevealedAdjacents(adjacents)
+			return this.#unrevealedAdjacents(adjacents)
+		return []
 	}
 
 	#numberOfAdjacentMines(adjacents) {
@@ -180,11 +191,6 @@ export default class Game {
 		return numberOfAdjacentMines == 0
 	}
 
-	#revealUnrevealedAdjacents(adjacents) {
-		const unrevealed = this.#unrevealedAdjacents(adjacents)
-		this.#revealCells(unrevealed)
-	}
-
 	#unrevealedAdjacents(adjacents) {
 		return adjacents.filter(
 			({ row, column }) => !this.#isCellRevealed(row, column)
@@ -201,13 +207,6 @@ export default class Game {
 
 	#cellState(row, column) {
 		return this.#cells[this.#cellKey(row, column)]
-	}
-
-	#revealCells(unrevealed) {
-		unrevealed.forEach(({ row, column }) => {
-			this.unflag(row, column)
-			this.reveal(row, column)
-		})
 	}
 
 	#hasSweepedMines() {
