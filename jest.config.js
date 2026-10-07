@@ -9,8 +9,8 @@ const testPackage = path.join(__dirname, "Mine-Sweeper-test")
 module.exports = {
 	roots: ["<rootDir>/Mine-Sweeper-test", "<rootDir>/Mine-Sweeper/src"],
 	// Load the engine from source, not the node_modules symlink, which coverage ignores.
+	// Load the public entry point from source, so coverage includes the engine.
 	moduleNameMapper: {
-		"^mine-sweeper/src/(.*)$": "<rootDir>/Mine-Sweeper/src/$1",
 		"^mine-sweeper$": "<rootDir>/Mine-Sweeper/src/index.js",
 	},
 	transform: {
