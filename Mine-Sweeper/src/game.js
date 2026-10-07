@@ -75,7 +75,7 @@ export default class Game {
 	#flagCell(row, column) {
 		this.#decrementFlag()
 		this.#changeStateToFlagged(row, column)
-		this.#flagReceiver(row, column)
+		this.#notifyFlagged(row, column)
 	}
 
 	#decrementFlag() {
@@ -90,7 +90,7 @@ export default class Game {
 		this.#cells[cell] = state
 	}
 
-	#flagReceiver(row, column) {
+	#notifyFlagged(row, column) {
 		this.#receiver.flag(row, column)
 	}
 
@@ -106,7 +106,7 @@ export default class Game {
 	#unflagCell(row, column) {
 		this.#incrementFlag()
 		this.#changeStateToHidden(row, column)
-		this.#unflagReceiver(row, column)
+		this.#notifyUnflagged(row, column)
 	}
 
 	#incrementFlag() {
@@ -117,7 +117,7 @@ export default class Game {
 		this.#setCellState(this.#cellKey(row, column), undefined)
 	}
 
-	#unflagReceiver(row, column) {
+	#notifyUnflagged(row, column) {
 		this.#receiver.unflag(row, column)
 	}
 
@@ -171,7 +171,7 @@ export default class Game {
 	#revealCell(row, column) {
 		const adjacents = this.#board.adjacents(row, column)
 		const numberOfAdjacentMines = this.#numberOfAdjacentMines(adjacents)
-		this.#revealReceiver({
+		this.#notifyRevealed({
 			row,
 			column,
 			numberOfAdjacentMines,
@@ -191,7 +191,7 @@ export default class Game {
 			.length
 	}
 
-	#revealReceiver({ row, column, numberOfAdjacentMines }) {
+	#notifyRevealed({ row, column, numberOfAdjacentMines }) {
 		this.#receiver.reveal({
 			row: row,
 			column: column,
