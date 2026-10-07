@@ -1,15 +1,17 @@
 import { Factory } from "mine-sweeper"
+import { board } from "./support/boards"
+import ReceiverRecorder from "./support/receiverRecorder"
 
 describe("Given the mines are given as a list of positions", () => {
-	let calls
+	let receiver
 	let game
 	beforeEach(() => {
-		calls = []
-		game = Factory.createGame(recorder(calls), {
-			rows: 3,
-			columns: 3,
-			mines: [{ row: 1, column: 1 }],
-		})
+		receiver = new ReceiverRecorder()
+		game = Factory.createGame(receiver, board`
+			* . .
+			. . .
+			. . .
+		`)
 	})
 
 	test("Then there is one flag per listed mine", () => {
@@ -20,7 +22,7 @@ describe("Given the mines are given as a list of positions", () => {
 		game.reveal(2, 2)
 		game.reveal(1, 1)
 
-		expect(calls).toEqual([
+		expect(receiver.calls).toEqual([
 			["reveal", { row: 2, column: 2, adjacentMines: 1 }],
 			["endGame", { won: false, mines: [{ row: 1, column: 1 }] }],
 		])
@@ -39,15 +41,17 @@ describe("Given a game created from the mines of a finished game", () => {
 
 describe("Given the list of mines is changed after the game is created", () => {
 	test("Then the game is not affected", () => {
-		const calls = []
+		const receiver = new ReceiverRecorder()
 		const mines = [{ row: 1, column: 1 }]
-		const game = Factory.createGame(recorder(calls), { rows: 3, columns: 3, mines })
+		const game = Factory.createGame(receiver, { rows: 3, columns: 3, mines })
 
 		mines.push({ row: 2, column: 2 })
 		mines[0].row = 3
 		game.reveal(1, 1)
 
-		expect(calls).toEqual([["endGame", { won: false, mines: [{ row: 1, column: 1 }] }]])
+		expect(receiver.calls).toEqual([
+			["endGame", { won: false, mines: [{ row: 1, column: 1 }] }],
+		])
 	})
 })
 
@@ -65,30 +69,20 @@ describe("Given an invalid list of mines", () => {
 		[[null], "mines[0]: row must be a number, got undefined", TypeError],
 		[[{ row: 2, column: 2 }, { row: 2, column: 2 }], "mines lists 2,2 more than once", RangeError],
 	])("Then mines: %j must be rejected with: %s", (mines, message, ErrorType) => {
-		const create = () => Factory.createGame(recorder([]), { rows: 3, columns: 3, mines })
+		const create = () =>
+			Factory.createGame(new ReceiverRecorder(), { rows: 3, columns: 3, mines })
 
 		expect(create).toThrow(ErrorType)
 		expect(create).toThrow(message)
 	})
 })
 
-function recorder(calls) {
-	return {
-		flag: (row, column) => calls.push(["flag", { row, column }]),
-		unflag: (row, column) => calls.push(["unflag", { row, column }]),
-		reveal: (cell) => calls.push(["reveal", cell]),
-		endGame: (result) => calls.push(["endGame", result]),
-	}
-}
-
 function playUntilGameEnds(options) {
-	let result
-	const game = Factory.createGame(
-		{ flag() {}, unflag() {}, reveal() {}, endGame: (r) => (result = r) },
-		options
-	)
-	for (let row = 1; row <= game.rows && !result; row++)
-		for (let column = 1; column <= game.columns && !result; column++)
+	const receiver = new ReceiverRecorder()
+	const game = Factory.createGame(receiver, options)
+	const ended = () => receiver.callsTo("endGame").length > 0
+	for (let row = 1; row <= game.rows && !ended(); row++)
+		for (let column = 1; column <= game.columns && !ended(); column++)
 			game.reveal(row, column)
-	return result
+	return receiver.callsTo("endGame")[0]
 }
