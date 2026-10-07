@@ -9,6 +9,10 @@ updates:
       # One PR for all minor/patch bumps; majors still get their own PR.
       test-tooling:
         update-types: [minor, patch]
+    ignore:
+      # babel-jest only supports Babel 7; Babel 8 breaks the test run.
+      - dependency-name: "@babel/*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /
