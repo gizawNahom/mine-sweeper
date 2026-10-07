@@ -64,6 +64,14 @@ export default class Game {
 		return this.#cellState(row, column) === undefined
 	}
 
+	#cellState(row, column) {
+		return this.#cells[this.#cellKey(row, column)]
+	}
+
+	#cellKey(row, column) {
+		return `${row},${column}`
+	}
+
 	#flagCell(row, column) {
 		this.#decrementFlag()
 		this.#changeStateToFlagged(row, column)
@@ -78,6 +86,10 @@ export default class Game {
 		this.#setCellState(this.#cellKey(row, column), CellState.FLAGGED)
 	}
 
+	#setCellState(cell, state) {
+		this.#cells[cell] = state
+	}
+
 	#flagReceiver(row, column) {
 		this.#receiver.flag(row, column)
 	}
@@ -85,6 +97,10 @@ export default class Game {
 	unflag(row, column) {
 		this.#board.checkCell(row, column)
 		if (this.#isFlagged(row, column)) this.#unflagCell(row, column)
+	}
+
+	#isFlagged(row, column) {
+		return this.#cellState(row, column) === CellState.FLAGGED
 	}
 
 	#unflagCell(row, column) {
@@ -112,6 +128,22 @@ export default class Game {
 		else this.#revealSafeCell(row, column)
 	}
 
+	#shouldReveal(row, column) {
+		return !this.#isCellRevealed(row, column) && !this.#isFlagged(row, column)
+	}
+
+	#isCellRevealed(row, column) {
+		return this.#cellState(row, column) === CellState.REVEALED
+	}
+
+	#isCellArmed(row, column) {
+		return this.#mines.some((mine) => mine.row === row && mine.column === column)
+	}
+
+	#endGame() {
+		this.#receiver.endGame(this.#mines)
+	}
+
 	#revealSafeCell(row, column) {
 		const pending = [{ row, column }]
 		while (pending.length > 0) {
@@ -128,24 +160,8 @@ export default class Game {
 		return this.#revealCell(row, column)
 	}
 
-	#endGame() {
-		this.#receiver.endGame(this.#mines)
-	}
-
-	#shouldReveal(row, column) {
-		return !this.#isCellRevealed(row, column) && !this.#isFlagged(row, column)
-	}
-
-	#isFlagged(row, column) {
-		return this.#cellState(row, column) === CellState.FLAGGED
-	}
-
 	#changeStateToRevealed(row, column) {
 		this.#setCellState(this.#cellKey(row, column), CellState.REVEALED)
-	}
-
-	#setCellState(cell, state) {
-		this.#cells[cell] = state
 	}
 
 	#decrementNumberOfUnrevealed() {
@@ -175,16 +191,16 @@ export default class Game {
 			.length
 	}
 
-	#isCellArmed(row, column) {
-		return this.#mines.some((mine) => mine.row === row && mine.column === column)
-	}
-
 	#revealReceiver({ row, column, numberOfAdjacentMines }) {
 		this.#receiver.reveal({
 			row: row,
 			column: column,
 			adjacentMines: numberOfAdjacentMines,
 		})
+	}
+
+	#hasSweepedMines() {
+		return this.#numberOfUnrevealedCells === this.#board.mines
 	}
 
 	#noAdjacentMines(numberOfAdjacentMines) {
@@ -195,22 +211,6 @@ export default class Game {
 		return adjacents.filter(
 			({ row, column }) => !this.#isCellRevealed(row, column)
 		)
-	}
-
-	#isCellRevealed(row, column) {
-		return this.#cellState(row, column) === CellState.REVEALED
-	}
-
-	#cellKey(row, column) {
-		return `${row},${column}`
-	}
-
-	#cellState(row, column) {
-		return this.#cells[this.#cellKey(row, column)]
-	}
-
-	#hasSweepedMines() {
-		return this.#numberOfUnrevealedCells === this.#board.mines
 	}
 }
 
