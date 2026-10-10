@@ -7,7 +7,7 @@ A UI-agnostic Minesweeper game engine written in plain JavaScript (ES modules, n
 
 **▶ Play the demo:** [plain JavaScript](https://gizawnahom.github.io/mine-sweeper/demo/) ([source](demo/)) or [React](https://gizawnahom.github.io/mine-sweeper/react/) ([source](demo-react/)), two small browser UIs built on the engine.
 
-The engine holds the game rules — mine placement, flagging, revealing, flood-fill of empty areas, and win/loss detection — and reports every change to a **receiver** object you provide. That keeps it decoupled from any particular UI: plug in a terminal renderer, a DOM board, or a test spy.
+The engine holds the game rules — mine placement, flagging, revealing, flood-fill of empty areas, and win/loss detection — and announces every change as a [domain event](#domain-events) such as `CellRevealed` or `GameWon`. Any number of listeners can follow a game with `game.subscribe`, which keeps the engine decoupled from any particular UI: plug in a DOM board, a React component, a logger, or a test. If you prefer one object with a method per kind of change, pass a [receiver](#the-receiver) instead.
 
 ## Quick start
 
