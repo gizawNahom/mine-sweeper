@@ -71,7 +71,7 @@ const replay = Factory.createGame(receiver, { rows: 8, columns: 10, mines: resul
 
 ### The receiver
 
-The receiver is any object with these four methods; all four are required. The game calls them synchronously, while `reveal`, `flag` or `unflag` is running.
+The receiver is any object with these four methods; all four are required. The game calls them synchronously, while `reveal`, `flag` or `unflag` is running, and only after its own state is updated: inside `flag` and `unflag`, `game.numberOfFlags` already reflects the change.
 
 | Method                                 | Called when                                                                                         |
 | -------------------------------------- | --------------------------------------------------------------------------------------------------- |

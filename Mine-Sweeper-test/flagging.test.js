@@ -1,4 +1,5 @@
 import { Factory } from "mine-sweeper"
+import { board } from "./support/boards"
 import { MINE_FIELD_1 } from "./support/mineFields"
 import ReceiverRecorder from "./support/receiverRecorder"
 
@@ -171,6 +172,44 @@ describe("Given a new game", () => {
 				expect(receiver.calls).toEqual([["endGame", { won: false, mines: MINE_FIELD_1.mines }]])
 			})
 		})
+	})
+})
+
+describe("Given a receiver that reads the flag count when it is notified", () => {
+	let game
+	let seen
+	beforeEach(() => {
+		seen = []
+		const receiver = {
+			flag: () => seen.push(["flag", game.numberOfFlags]),
+			unflag: () => seen.push(["unflag", game.numberOfFlags]),
+			reveal() {},
+			endGame() {},
+		}
+		game = Factory.createGame(receiver, board`
+			. . . *
+			. . . .
+			. . . .
+		`)
+	})
+
+	test("Then flag and unflag callbacks already see the updated count", () => {
+		game.flag(1, 1)
+		game.unflag(1, 1)
+
+		expect(seen).toEqual([
+			["flag", 0],
+			["unflag", 1],
+		])
+	})
+
+	test("Then an unflag caused by auto-reveal also sees the updated count", () => {
+		game.flag(1, 1)
+		seen = []
+
+		game.reveal(3, 1)
+
+		expect(seen).toEqual([["unflag", 1]])
 	})
 })
 
