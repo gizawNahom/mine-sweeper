@@ -2,8 +2,8 @@
 // other test avoids on purpose. It exists because PublishingGame forwards each
 // public member of Game by hand, and nothing seen through the public API would
 // notice a member that was added to Game but never forwarded.
-import Game from "../../Mine-Sweeper/src/game.js"
-import PublishingGame from "../../Mine-Sweeper/src/publishingGame.js"
+import Game from "../../src/game.js"
+import PublishingGame from "../../src/publishingGame.js"
 
 const ADDED_BY_PUBLISHING_GAME = ["subscribe"]
 

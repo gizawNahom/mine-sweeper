@@ -1,8 +1,8 @@
 version: 2
 updates:
-  # Test tooling (Jest, Babel). The engine itself has no dependencies.
+  # Test tooling (Jest, Babel). The engine itself has no runtime dependencies.
   - package-ecosystem: npm
-    directory: /Mine-Sweeper-test
+    directory: /
     schedule:
       interval: weekly
     groups:

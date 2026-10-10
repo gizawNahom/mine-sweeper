@@ -1,5 +1,5 @@
 # Publishes the sample UIs to GitHub Pages: the plain demo (demo/) with the
-# engine source it imports (Mine-Sweeper/src/), and the React demo
+# engine source it imports (src/), and the React demo
 # (demo-react/, built with Vite) under react/.
 # Requires Settings → Pages → Source: "GitHub Actions".
 
@@ -11,7 +11,7 @@ on:
     paths:
       - demo/**
       - demo-react/**
-      - Mine-Sweeper/src/**
+      - src/**
       - .github/workflows/pages.yml
   workflow_dispatch:
 
@@ -44,9 +44,9 @@ jobs:
         npm run build
     - name: Assemble the site
       run: |
-        mkdir -p site/Mine-Sweeper
+        mkdir -p site
         cp -r demo site/demo
-        cp -r Mine-Sweeper/src site/Mine-Sweeper/src
+        cp -r src site/src
         cp -r demo-react/dist site/react
         cat > site/index.html <<'EOF'
         <!doctype html>

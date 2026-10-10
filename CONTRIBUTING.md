@@ -17,13 +17,12 @@ A failing test case is the best bug report.
 You need Node.js 22 or later.
 
 ```sh
-cd Mine-Sweeper-test
 npm ci
 npm test           # run the tests
 npm run coverage   # run the tests with a coverage report
 ```
 
-The engine (`Mine-Sweeper/src`) has no dependencies; all tooling lives in `Mine-Sweeper-test`.
+The engine (`src/`) has no runtime dependencies; Jest and Babel are development dependencies, used only for testing.
 
 ## How changes are made
 
@@ -43,9 +42,9 @@ describe("And the user has flagged an armed cell", () => {
 })
 ```
 
-CI requires **100% coverage** of the engine, so every change to `Mine-Sweeper/src` needs tests. Coverage only shows that code ran, so make sure your tests also check the result.
+CI requires **100% coverage** of the engine, so every change to `src/` needs tests. Coverage only shows that code ran, so make sure your tests also check the result.
 
-Tests use only the public API (`import { Factory } from "mine-sweeper"`), so refactoring the engine doesn't break them. The one exception is `Mine-Sweeper-test/internals/`, for checks that can't be made from outside, such as `PublishingGame` forwarding every public member of `Game`; keep it small.
+Tests use only the public API (`import { Factory } from "mine-sweeper"`), so refactoring the engine doesn't break them. The one exception is `test/internals/`, for checks that can't be made from outside, such as `PublishingGame` forwarding every public member of `Game`; keep it small.
 
 `replay.test.js` replays 500 seeded random games and compares a fingerprint of everything the receiver was told. A pure refactor must leave it passing. If you change behavior on purpose, it will fail: update `RECORDED_FINGERPRINT` to the value in the failure message, in the same commit as the change.
 

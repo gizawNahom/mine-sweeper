@@ -1,4 +1,4 @@
-import { Factory } from "../Mine-Sweeper/src/index.js"
+import { Factory } from "../src/index.js"
 
 const DIFFICULTIES = {
 	default: undefined, // the engine's default: 8x10 with 10 mines

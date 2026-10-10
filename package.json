@@ -1,0 +1,40 @@
+{
+  "name": "mine-sweeper",
+  "version": "1.0.0",
+  "description": "A UI-agnostic Minesweeper game engine in JavaScript",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gizawNahom/mine-sweeper.git"
+  },
+  "author": "Nahom Gizaw",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gizawNahom/mine-sweeper/issues"
+  },
+  "homepage": "https://github.com/gizawNahom/mine-sweeper#readme",
+  "keywords": [
+    "minesweeper",
+    "game",
+    "engine"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "jest",
+    "coverage": "jest --coverage"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.29.7",
+    "@babel/preset-env": "^7.29.7",
+    "jest": "^30.5.2"
+  }
+}

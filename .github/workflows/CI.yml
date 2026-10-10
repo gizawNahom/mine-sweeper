@@ -12,9 +12,6 @@ on:
 
 jobs:
   build:
-    defaults:
-      run:
-        working-directory: Mine-Sweeper-test
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -27,7 +24,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        cache-dependency-path: Mine-Sweeper-test/package-lock.json
+        cache-dependency-path: package-lock.json
     - run: npm ci
     - run: npm run coverage
 

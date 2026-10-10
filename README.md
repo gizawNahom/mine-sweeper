@@ -12,7 +12,7 @@ The engine holds the game rules — mine placement, flagging, revealing, flood-f
 ## Quick start
 
 ```js
-import { Factory } from "./Mine-Sweeper/src/index.js"
+import { Factory } from "./src/index.js"
 
 const receiver = {
 	flag(row, column) { console.log(`flagged ${row},${column}`) },
@@ -29,14 +29,14 @@ game.reveal(4, 5)
 Or leave the receiver out and subscribe to [domain events](#domain-events):
 
 ```js
-import { Factory } from "./Mine-Sweeper/src/index.js"
+import { Factory } from "./src/index.js"
 
 const game = Factory.createGame()
 game.subscribe((event) => console.log(event))
 game.reveal(4, 5)
 ```
 
-The engine is not published to npm yet: copy `Mine-Sweeper/src/` into your project (or import it from this repository, as the demo does). It runs in modern browsers and in Node.js; CI tests it on Node.js 22, 24 and 26.
+The engine is not published to npm yet: copy `src/` into your project (or import it from this repository, as the demo does). It runs in modern browsers and in Node.js; CI tests it on Node.js 22, 24 and 26.
 
 ## How the game plays
 
@@ -128,14 +128,14 @@ Error messages name the option or coordinate and the value, for example `mines m
 ## Project layout
 
 ```
-Mine-Sweeper/        the engine (src/)
-Mine-Sweeper-test/   Jest test suite, depends on the engine via file:../Mine-Sweeper
+src/                 the engine: the only files in the package ("files": ["src"])
+test/                Jest tests, through the public API (internals/ is the one exception)
 demo/                the plain JavaScript sample UI, deployed to GitHub Pages
 demo-react/          the React sample UI (Vite), deployed to GitHub Pages under react/
-jest.config.js       Jest config; tests run from the repo root so coverage includes the engine
+package.json         the mine-sweeper package; Jest and Babel are dev dependencies only
 ```
 
-The tests live in a separate package so the engine itself ships with zero dependencies.
+The engine has no runtime dependencies: Jest and Babel are only used to test it and are never installed with it.
 
 ## Running the demos locally
 
@@ -159,7 +159,6 @@ npm test           # the reducer tests
 ## Running the tests
 
 ```sh
-cd Mine-Sweeper-test
 npm ci
 npm test           # run the tests
 npm run coverage   # run the tests with a coverage report
@@ -171,7 +170,7 @@ npm run coverage   # run the tests with a coverage report
 | ---------- | -------- | --------- | ----- |
 | 100%       | 100%     | 100%      | 100%  |
 
-CI enforces 100% coverage of the engine (`Mine-Sweeper/src`), so the build fails if any code goes untested. Coverage measures which code runs during the tests, not whether it behaves correctly.
+CI enforces 100% coverage of the engine (`src/`), so the build fails if any code goes untested. Coverage measures which code runs during the tests, not whether it behaves correctly.
 
 ## Contributing
 

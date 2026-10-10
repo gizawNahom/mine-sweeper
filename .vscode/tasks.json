@@ -4,19 +4,17 @@
 		{
 			"type": "npm",
 			"script": "install",
-			"path": "Mine-Sweeper-test",
 			"group": "none",
 			"problemMatcher": [],
-			"label": "npm: install - Mine-Sweeper-test",
+			"label": "npm: install",
 			"detail": "install dependencies from package"
 		},
 		{
 			"type": "npm",
 			"script": "test",
-			"path": "Mine-Sweeper-test",
 			"group": "test",
 			"problemMatcher": [],
-			"label": "npm: test - Mine-Sweeper-test",
+			"label": "npm: test",
 			"detail": "jest"
 		}
 	]
