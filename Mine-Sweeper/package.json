@@ -3,6 +3,9 @@
     "version": "1.0.0",
     "description": "A UI-agnostic Minesweeper game engine in JavaScript",
     "main": "src/index.js",
+    "exports": {
+        ".": "./src/index.js"
+    },
     "type": "module",
     "repository": {
         "type": "git",

@@ -38,6 +38,8 @@ The engine is not published to npm yet: copy `Mine-Sweeper/src/` into your proje
 
 ## API
 
+The package's only entry point is `src/index.js`, which exports `Factory`. The other modules are internal: the package does not export them, so importing `mine-sweeper/src/...` fails.
+
 ### `Factory.createGame(receiver, options?)`
 
 Creates a new game that reports to `receiver`. `options` is optional, and so is each field in it:
