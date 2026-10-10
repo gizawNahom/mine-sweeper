@@ -45,6 +45,8 @@ describe("And the user has flagged an armed cell", () => {
 
 CI requires **100% coverage** of the engine, so every change to `Mine-Sweeper/src` needs tests. Coverage only shows that code ran, so make sure your tests also check the result.
 
+`replay.test.js` replays 500 seeded random games and compares a fingerprint of everything the receiver was told. A pure refactor must leave it passing. If you change behavior on purpose, it will fail: update `RECORDED_FINGERPRINT` to the value in the failure message, in the same commit as the change.
+
 ## Code style
 
 Match the surrounding code:
