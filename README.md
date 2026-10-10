@@ -26,6 +26,16 @@ game.flag(1, 1)
 game.reveal(4, 5)
 ```
 
+Or leave the receiver out and subscribe to [domain events](#domain-events):
+
+```js
+import { Factory } from "./Mine-Sweeper/src/index.js"
+
+const game = Factory.createGame()
+game.subscribe((event) => console.log(event))
+game.reveal(4, 5)
+```
+
 The engine is not published to npm yet: copy `Mine-Sweeper/src/` into your project (or import it from this repository, as the demo does). It runs in modern browsers and in Node.js; CI tests it on Node.js 22, 24 and 26.
 
 ## How the game plays
@@ -42,14 +52,14 @@ The package's only entry point is `src/index.js`, which exports `Factory`. The o
 
 ### `Factory.createGame(options)`
 
-Creates a new game. Every field of `options` has a default except `receiver`:
+Creates a new game. `options` is optional, and so is each field in it:
 
 | Option    | Default | Allowed values                                     |
 | --------- | ------- | -------------------------------------------------- |
 | `rows`    | `8`     | a whole number of at least 1                       |
 | `columns` | `10`    | a whole number of at least 1                       |
 | `mines`   | `10`    | a whole number from 1 to `rows × columns − 1`, placed at random, **or** a list of `{ row, column }` positions (same length limits, each on the board, no duplicates) |
-| `receiver` | — | an object told about every change (see [The receiver](#the-receiver)) |
+| `receiver` | none   | an object told about every change (see [The receiver](#the-receiver)); leave it out to follow the game with [`subscribe`](#domain-events) only |
 
 There must be at least one safe cell, so a board needs at least 2 cells. Note that the default of 10 mines does not fit on small boards: `{ rows: 3, columns: 3 }` needs a `mines` value too.
 
@@ -73,7 +83,7 @@ const replay = Factory.createGame({ rows: 8, columns: 10, mines: result.mines, r
 
 ### The receiver
 
-The receiver is any object with these four methods; all four are required. They are called with the same information as the [domain events](#domain-events), at the same time: synchronously, once the move is complete, and before any listeners added with `subscribe`.
+The receiver is any object with these four methods; when one is given, all four are required, and this is checked when the game is created. They are called with the same information as the [domain events](#domain-events), at the same time: synchronously, once the move is complete, and before any listeners added with `subscribe`.
 
 | Method                                 | Called when                                                                                         |
 | -------------------------------------- | --------------------------------------------------------------------------------------------------- |
@@ -109,6 +119,7 @@ unsubscribe()
 
 Invalid input throws instead of being ignored, and a rejected call changes nothing:
 
+- `Factory.createGame` throws a `TypeError` when a receiver is given but is not an object or lacks one of its four methods (`receiver.unflag must be a function, got undefined`).
 - `Factory.createGame` throws when `options` is invalid: a `TypeError` for unknown option names or non-numbers (`{ row: 16 }`, `{ rows: "8" }`), and a `RangeError` for values out of range (`{ rows: 0 }`, `{ rows: 3, columns: 3, mines: 9 }`).
 - `reveal`, `flag` and `unflag` throw for a position that is not on the board: a `RangeError` for `reveal(0, 5)` or `reveal(9, 1)` on an 8-row board, and a `TypeError` for `reveal("13")`. This applies even after the game is over.
 

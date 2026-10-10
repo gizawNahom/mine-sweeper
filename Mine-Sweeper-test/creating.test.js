@@ -143,3 +143,54 @@ describe("Given an invalid list of mines", () => {
 		expect(create).toThrow(message)
 	})
 })
+
+describe("Given no receiver", () => {
+	test("Then the game uses the default options and every move works", () => {
+		const game = Factory.createGame()
+		const events = []
+		game.subscribe((event) => events.push(event))
+
+		game.flag(1, 1)
+		game.unflag(1, 1)
+
+		expect(game.rows).toBe(8)
+		expect(events).toEqual([
+			{ type: "CellFlagged", row: 1, column: 1 },
+			{ type: "CellUnflagged", row: 1, column: 1 },
+		])
+	})
+
+	test("Then other options can still be given", () => {
+		const game = Factory.createGame(board`
+			* .
+		`)
+		const events = []
+		game.subscribe((event) => events.push(event))
+
+		game.reveal(1, 2)
+
+		expect(game.columns).toBe(2)
+		expect(events).toEqual([
+			{ type: "CellRevealed", row: 1, column: 2, adjacentMines: 1 },
+			{ type: "GameWon", mines: [{ row: 1, column: 1 }] },
+		])
+	})
+})
+
+describe("Given an invalid receiver", () => {
+	const complete = { flag() {}, unflag() {}, reveal() {}, endGame() {} }
+
+	test.each([
+		[null, "receiver must be an object with flag, unflag, reveal and endGame, got null"],
+		["receiver", "receiver must be an object with flag, unflag, reveal and endGame, got string"],
+		[{}, "receiver.flag must be a function, got undefined"],
+		[{ ...complete, unflag: undefined }, "receiver.unflag must be a function, got undefined"],
+		[{ ...complete, reveal: "reveal" }, "receiver.reveal must be a function, got string"],
+		[{ flag() {}, unflag() {}, reveal() {} }, "receiver.endGame must be a function, got undefined"],
+	])("Then %p is rejected when the game is created", (receiver, message) => {
+		const create = () => Factory.createGame({ receiver })
+
+		expect(create).toThrow(TypeError)
+		expect(create).toThrow(message)
+	})
+})
