@@ -5,11 +5,12 @@ export default class Game {
 	#minefield
 	#board
 
-	#receiver
+	// Where the game reports every change: an object with flag, unflag, reveal and endGame.
+	#outputPort
 	#isOver = false
 
-	constructor(receiver, board, minefield) {
-		this.#receiver = receiver
+	constructor(outputPort, board, minefield) {
+		this.#outputPort = outputPort
 		this.#board = board
 		this.#minefield = minefield
 
@@ -74,7 +75,7 @@ export default class Game {
 	}
 
 	#notifyFlagged(row, column) {
-		this.#receiver.flag(row, column)
+		this.#outputPort.flag(row, column)
 	}
 
 	unflag(row, column) {
@@ -102,7 +103,7 @@ export default class Game {
 	}
 
 	#notifyUnflagged(row, column) {
-		this.#receiver.unflag(row, column)
+		this.#outputPort.unflag(row, column)
 	}
 
 	reveal(row, column) {
@@ -123,7 +124,7 @@ export default class Game {
 
 	#lose() {
 		this.#isOver = true
-		this.#receiver.endGame({ won: false, mines: this.#minefield.cells })
+		this.#outputPort.endGame({ won: false, mines: this.#minefield.cells })
 	}
 
 	#revealArea(row, column) {
@@ -161,7 +162,7 @@ export default class Game {
 	}
 
 	#notifyRevealed({ row, column, numberOfAdjacentMines }) {
-		this.#receiver.reveal({
+		this.#outputPort.reveal({
 			row: row,
 			column: column,
 			adjacentMines: numberOfAdjacentMines,
@@ -174,7 +175,7 @@ export default class Game {
 
 	#win() {
 		this.#isOver = true
-		this.#receiver.endGame({ won: true, mines: this.#minefield.cells })
+		this.#outputPort.endGame({ won: true, mines: this.#minefield.cells })
 	}
 
 	#noAdjacentMines(numberOfAdjacentMines) {
