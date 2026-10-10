@@ -1,14 +1,14 @@
-import { Factory } from "mine-sweeper"
 import { board } from "./support/boards"
 import { MINE_FIELD_1 } from "./support/mineFields"
 import ReceiverRecorder from "./support/receiverRecorder"
+import { startGame } from "./support/games"
 
 describe("Given a new game on mine field 1", () => {
 	let game
 	let receiver
 	beforeEach(() => {
 		receiver = new ReceiverRecorder()
-		game = Factory.createGame(receiver, MINE_FIELD_1)
+		game = startGame(MINE_FIELD_1, receiver)
 	})
 
 	describe("When the user reveals a mine", () => {
@@ -106,7 +106,7 @@ describe("Given a 3x3 game with one mine in the centre", () => {
 				. * .
 				. . .
 			`
-			const game = Factory.createGame(receiver, field)
+			const game = startGame(field, receiver)
 
 			for (let row = 1; row <= 3; row++)
 				for (let column = 1; column <= 3; column++)
@@ -129,7 +129,7 @@ describe("Given a 3x3 game with one mine in a corner", () => {
 				. . .
 				. . *
 			`
-			const game = Factory.createGame(receiver, field)
+			const game = startGame(field, receiver)
 
 			game.reveal(1, 1)
 

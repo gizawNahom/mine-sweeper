@@ -1,11 +1,11 @@
 // Draws a board as a picture: "*" is a mine, "." is a safe cell.
 //
-//   Factory.createGame(receiver, board`
+//   board`
 //       . * .
 //       . . .
-//   `)
+//   `
 //
-// returns { rows: 2, columns: 3, mines: [{ row: 1, column: 2 }] }.
+// returns the game options { rows: 2, columns: 3, mines: [{ row: 1, column: 2 }] }.
 export function board(strings, ...values) {
 	const rows = linesOf(String.raw({ raw: strings }, ...values)).map((line) => line.split(/\s+/))
 	assertRectangular(rows)

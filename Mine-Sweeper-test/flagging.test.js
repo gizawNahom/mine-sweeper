@@ -1,14 +1,14 @@
-import { Factory } from "mine-sweeper"
 import { board } from "./support/boards"
 import { MINE_FIELD_1 } from "./support/mineFields"
 import ReceiverRecorder from "./support/receiverRecorder"
+import { startGame } from "./support/games"
 
 describe("Given a new game", () => {
 	let game
 	let receiver
 	beforeEach(() => {
 		receiver = new ReceiverRecorder()
-		game = Factory.createGame(receiver, MINE_FIELD_1)
+		game = startGame(MINE_FIELD_1, receiver)
 	})
 
 	describe("When the user flags a hidden cell", () => {
@@ -186,11 +186,11 @@ describe("Given a receiver that reads the flag count when it is notified", () =>
 			reveal() {},
 			endGame() {},
 		}
-		game = Factory.createGame(receiver, board`
+		game = startGame(board`
 			. . . *
 			. . . .
 			. . . .
-		`)
+		`, receiver)
 	})
 
 	test("Then flag and unflag callbacks already see the updated count", () => {
@@ -217,11 +217,11 @@ describe("Given a game with more than 9 rows and columns", () => {
 	describe("When the user flags 1,11 and reveals 11,1", () => {
 		test("Then 11,1 is revealed, since they are different cells", () => {
 			const receiver = new ReceiverRecorder()
-			const game = Factory.createGame(receiver, {
+			const game = startGame({
 				rows: 12,
 				columns: 12,
 				mines: [{ row: 12, column: 12 }],
-			})
+			}, receiver)
 			game.flag(1, 11)
 			receiver.clear()
 

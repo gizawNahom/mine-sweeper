@@ -1,13 +1,13 @@
-import { Factory } from "mine-sweeper"
 import { MINE_FIELD_1, MINE_FIELD_2 } from "./support/mineFields"
 import ReceiverRecorder from "./support/receiverRecorder"
+import { startGame } from "./support/games"
 
 describe("Given a new game on mine field 1", () => {
 	let game
 	let receiver
 	beforeEach(() => {
 		receiver = new ReceiverRecorder()
-		game = Factory.createGame(receiver, MINE_FIELD_1)
+		game = startGame(MINE_FIELD_1, receiver)
 	})
 
 	test.each([
@@ -55,7 +55,7 @@ describe("Given a game on mine field 2 with a flag next to an empty cell", () =>
 	let receiver
 	beforeEach(() => {
 		receiver = new ReceiverRecorder()
-		const game = Factory.createGame(receiver, MINE_FIELD_2)
+		const game = startGame(MINE_FIELD_2, receiver)
 		game.flag(2, 6)
 		game.reveal(2, 4)
 		receiver.clear()

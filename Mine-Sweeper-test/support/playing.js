@@ -1,11 +1,11 @@
-import { Factory } from "mine-sweeper"
 import ReceiverRecorder from "./receiverRecorder"
+import { startGame } from "./games"
 
 // Creates a game and reveals cells in reading order until it ends.
 // Returns what endGame reported: { won, mines }.
 export function playUntilGameEnds(options) {
 	const receiver = new ReceiverRecorder()
-	revealUntilGameEnds(Factory.createGame(receiver, options), receiver)
+	revealUntilGameEnds(startGame(options, receiver), receiver)
 	return receiver.callsTo("endGame")[0]
 }
 

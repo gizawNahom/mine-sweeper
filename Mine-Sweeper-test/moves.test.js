@@ -1,13 +1,13 @@
-import { Factory } from "mine-sweeper"
 import { MINE_FIELD_1 } from "./support/mineFields"
 import ReceiverRecorder from "./support/receiverRecorder"
+import { startGame } from "./support/games"
 
 describe("Given a new 8x10 game", () => {
 	let game
 	let receiver
 	beforeEach(() => {
 		receiver = new ReceiverRecorder()
-		game = Factory.createGame(receiver, MINE_FIELD_1)
+		game = startGame(MINE_FIELD_1, receiver)
 	})
 
 	describe.each(["reveal", "flag", "unflag"])("When the user calls %s with a position off the board", (move) => {

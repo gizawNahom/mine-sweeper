@@ -1,6 +1,5 @@
-import { Factory } from "mine-sweeper"
 import { board } from "./support/boards"
-import ReceiverRecorder from "./support/receiverRecorder"
+import { startGame } from "./support/games"
 
 const FIELD = board`
 	. . . *
@@ -9,7 +8,7 @@ const FIELD = board`
 `
 
 function newGame() {
-	return Factory.createGame(new ReceiverRecorder(), FIELD)
+	return startGame(FIELD)
 }
 
 function subscribedGame() {
@@ -97,7 +96,7 @@ describe("Given a game with a receiver and a listener", () => {
 			reveal() {},
 			endGame() {},
 		}
-		const game = Factory.createGame(receiver, FIELD)
+		const game = startGame(FIELD, receiver)
 		game.subscribe(() => order.push("listener"))
 
 		game.flag(1, 1)
@@ -233,7 +232,7 @@ describe("Given listeners that throw", () => {
 
 describe("Given an event", () => {
 	test("Then it cannot be changed by a listener", () => {
-		const game = Factory.createGame(new ReceiverRecorder(), FIELD)
+		const game = startGame(FIELD)
 		let event
 		game.subscribe((received) => (event = received))
 
