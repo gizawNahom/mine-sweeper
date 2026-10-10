@@ -1,5 +1,7 @@
-# Publishes the sample UI (demo/) and the engine it imports (Mine-Sweeper/src/)
-# to GitHub Pages. Requires Settings → Pages → Source: "GitHub Actions".
+# Publishes the sample UIs to GitHub Pages: the plain demo (demo/) with the
+# engine source it imports (Mine-Sweeper/src/), and the React demo
+# (demo-react/, built with Vite) under react/.
+# Requires Settings → Pages → Source: "GitHub Actions".
 
 name: Deploy demo
 
@@ -8,6 +10,7 @@ on:
     branches: [ main ]
     paths:
       - demo/**
+      - demo-react/**
       - Mine-Sweeper/src/**
       - .github/workflows/pages.yml
   workflow_dispatch:
@@ -29,11 +32,22 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}demo/
     steps:
     - uses: actions/checkout@v4
+    - uses: actions/setup-node@v7
+      with:
+        node-version: 24.x
+        cache: 'npm'
+        cache-dependency-path: demo-react/package-lock.json
+    - name: Build the React demo
+      working-directory: demo-react
+      run: |
+        npm ci
+        npm run build
     - name: Assemble the site
       run: |
         mkdir -p site/Mine-Sweeper
         cp -r demo site/demo
         cp -r Mine-Sweeper/src site/Mine-Sweeper/src
+        cp -r demo-react/dist site/react
         cat > site/index.html <<'EOF'
         <!doctype html>
         <meta charset="utf-8" />

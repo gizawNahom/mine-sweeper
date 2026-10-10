@@ -14,6 +14,15 @@ updates:
       - dependency-name: "@babel/*"
         update-types: ["version-update:semver-major"]
 
+  # The React demo (React, Vite, Vitest).
+  - package-ecosystem: npm
+    directory: /demo-react
+    schedule:
+      interval: weekly
+    groups:
+      react-demo:
+        update-types: [minor, patch]
+
   - package-ecosystem: github-actions
     directory: /
     schedule:
