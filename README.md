@@ -5,7 +5,7 @@
 
 A UI-agnostic Minesweeper game engine written in plain JavaScript (ES modules, no dependencies).
 
-**[▶ Play the demo](https://gizawnahom.github.io/mine-sweeper/demo/)**, a small browser UI built on the engine ([source](demo/)).
+**▶ Play the demo:** [plain JavaScript](https://gizawnahom.github.io/mine-sweeper/demo/) ([source](demo/)) or [React](https://gizawnahom.github.io/mine-sweeper/react/) ([source](demo-react/)), two small browser UIs built on the engine.
 
 The engine holds the game rules — mine placement, flagging, revealing, flood-fill of empty areas, and win/loss detection — and reports every change to a **receiver** object you provide. That keeps it decoupled from any particular UI: plug in a terminal renderer, a DOM board, or a test spy.
 
@@ -130,21 +130,31 @@ Error messages name the option or coordinate and the value, for example `mines m
 ```
 Mine-Sweeper/        the engine (src/)
 Mine-Sweeper-test/   Jest test suite, depends on the engine via file:../Mine-Sweeper
-demo/                the sample browser UI, deployed to GitHub Pages
+demo/                the plain JavaScript sample UI, deployed to GitHub Pages
+demo-react/          the React sample UI (Vite), deployed to GitHub Pages under react/
 jest.config.js       Jest config; tests run from the repo root so coverage includes the engine
 ```
 
 The tests live in a separate package so the engine itself ships with zero dependencies.
 
-## Running the demo locally
+## Running the demos locally
 
-The demo loads the engine as ES modules, so it has to be served over HTTP (opening the file directly won't work):
+The plain demo loads the engine as ES modules, so it has to be served over HTTP (opening the file directly won't work). From the repository root:
 
 ```sh
 python3 -m http.server
 ```
 
 Then open <http://localhost:8000/demo/>.
+
+The React demo uses Vite:
+
+```sh
+cd demo-react
+npm ci
+npm run dev        # then open the address it prints, usually http://localhost:5173/
+npm test           # the reducer tests
+```
 
 ## Running the tests
 
