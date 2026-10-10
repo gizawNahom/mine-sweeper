@@ -31,7 +31,7 @@ jobs:
   react-demo:
     defaults:
       run:
-        working-directory: demo-react
+        working-directory: demos/react
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v7
@@ -39,7 +39,7 @@ jobs:
       with:
         node-version: 24.x
         cache: 'npm'
-        cache-dependency-path: demo-react/package-lock.json
+        cache-dependency-path: demos/react/package-lock.json
     - run: npm ci
     - run: npm test
     - run: npm run build

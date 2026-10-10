@@ -5,7 +5,7 @@
 
 A UI-agnostic Minesweeper game engine written in plain JavaScript (ES modules, no dependencies).
 
-**▶ Play the demo:** [plain JavaScript](https://gizawnahom.github.io/mine-sweeper/demo/) ([source](demo/)) or [React](https://gizawnahom.github.io/mine-sweeper/react/) ([source](demo-react/)), two small browser UIs built on the engine.
+**▶ Play the demo:** [plain JavaScript](https://gizawnahom.github.io/mine-sweeper/demos/plain/) ([source](demos/plain/)) or [React](https://gizawnahom.github.io/mine-sweeper/demos/react/) ([source](demos/react/)), two small browser UIs built on the engine.
 
 The engine holds the game rules — mine placement, flagging, revealing, flood-fill of empty areas, and win/loss detection — and announces every change as a [domain event](#domain-events) such as `CellRevealed` or `GameWon`. Any number of listeners can follow a game with `game.subscribe`, which keeps the engine decoupled from any particular UI: plug in a DOM board, a React component, a logger, or a test. If you prefer one object with a method per kind of change, pass a [receiver](#the-receiver) instead.
 
@@ -130,8 +130,8 @@ Error messages name the option or coordinate and the value, for example `mines m
 ```
 src/                 the engine: the only files in the package ("files": ["src"])
 test/                Jest tests, through the public API (internals/ is the one exception)
-demo/                the plain JavaScript sample UI, deployed to GitHub Pages
-demo-react/          the React sample UI (Vite), deployed to GitHub Pages under react/
+demos/plain/         the plain JavaScript sample UI, deployed to GitHub Pages
+demos/react/         the React sample UI (Vite), deployed to GitHub Pages
 package.json         the mine-sweeper package; Jest and Babel are dev dependencies only
 ```
 
@@ -145,12 +145,12 @@ The plain demo loads the engine as ES modules, so it has to be served over HTTP 
 python3 -m http.server
 ```
 
-Then open <http://localhost:8000/demo/>.
+Then open <http://localhost:8000/demos/plain/>.
 
 The React demo uses Vite:
 
 ```sh
-cd demo-react
+cd demos/react
 npm ci
 npm run dev        # then open the address it prints, usually http://localhost:5173/
 npm test           # the reducer tests

@@ -10,7 +10,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "mine-sweeper": "file:..",
+    "mine-sweeper": "file:../..",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },

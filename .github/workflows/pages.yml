@@ -1,6 +1,6 @@
-# Publishes the sample UIs to GitHub Pages: the plain demo (demo/) with the
-# engine source it imports (src/), and the React demo
-# (demo-react/, built with Vite) under react/.
+# Publishes the sample UIs to GitHub Pages. The site mirrors the repository:
+# demos/plain/ imports the engine from ../../src/, so src/ is published too, and
+# demos/react/ is built with Vite. Older addresses (/, /demo/, /react/) redirect.
 # Requires Settings → Pages → Source: "GitHub Actions".
 
 name: Deploy demo
@@ -9,8 +9,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - demo/**
-      - demo-react/**
+      - demos/**
       - src/**
       - .github/workflows/pages.yml
   workflow_dispatch:
@@ -29,32 +28,36 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}demo/
+      url: ${{ steps.deployment.outputs.page_url }}demos/plain/
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v7
       with:
         node-version: 24.x
         cache: 'npm'
-        cache-dependency-path: demo-react/package-lock.json
+        cache-dependency-path: demos/react/package-lock.json
     - name: Build the React demo
-      working-directory: demo-react
+      working-directory: demos/react
       run: |
         npm ci
         npm run build
     - name: Assemble the site
       run: |
-        mkdir -p site
-        cp -r demo site/demo
+        mkdir -p site/demos
         cp -r src site/src
-        cp -r demo-react/dist site/react
-        cat > site/index.html <<'EOF'
-        <!doctype html>
-        <meta charset="utf-8" />
-        <meta http-equiv="refresh" content="0; url=demo/" />
-        <title>Mine-Sweeper</title>
-        <a href="demo/">Play the Mine-Sweeper demo</a>
-        EOF
+        cp -r demos/plain site/demos/plain
+        cp -r demos/react/dist site/demos/react
+
+        redirect() {   # redirect <folder in site> <target relative to that folder>
+          mkdir -p "site/$1"
+          printf '%s\n' '<!doctype html>' '<meta charset="utf-8" />' \
+            "<meta http-equiv=\"refresh\" content=\"0; url=$2\" />" \
+            '<title>Mine-Sweeper</title>' \
+            "<a href=\"$2\">Play the Mine-Sweeper demo</a>" > "site/$1/index.html"
+        }
+        redirect . demos/plain/
+        redirect demo ../demos/plain/
+        redirect react ../demos/react/
     - uses: actions/configure-pages@v5
     - uses: actions/upload-pages-artifact@v3
       with:

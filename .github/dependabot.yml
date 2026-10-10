@@ -16,7 +16,7 @@ updates:
 
   # The React demo (React, Vite, Vitest).
   - package-ecosystem: npm
-    directory: /demo-react
+    directory: /demos/react
     schedule:
       interval: weekly
     groups:
