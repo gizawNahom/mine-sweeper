@@ -21,7 +21,7 @@ const receiver = {
 	endGame({ won, mines }) { console.log(won ? "won" : "lost", mines) },
 }
 
-const game = Factory.createGame(receiver)
+const game = Factory.createGame({ receiver })
 game.flag(1, 1)
 game.reveal(4, 5)
 ```
@@ -40,22 +40,23 @@ The engine is not published to npm yet: copy `Mine-Sweeper/src/` into your proje
 
 The package's only entry point is `src/index.js`, which exports `Factory`. The other modules are internal: the package does not export them, so importing `mine-sweeper/src/...` fails.
 
-### `Factory.createGame(receiver, options?)`
+### `Factory.createGame(options)`
 
-Creates a new game that reports to `receiver`. `options` is optional, and so is each field in it:
+Creates a new game. Every field of `options` has a default except `receiver`:
 
 | Option    | Default | Allowed values                                     |
 | --------- | ------- | -------------------------------------------------- |
 | `rows`    | `8`     | a whole number of at least 1                       |
 | `columns` | `10`    | a whole number of at least 1                       |
 | `mines`   | `10`    | a whole number from 1 to `rows × columns − 1`, placed at random, **or** a list of `{ row, column }` positions (same length limits, each on the board, no duplicates) |
+| `receiver` | — | an object told about every change (see [The receiver](#the-receiver)) |
 
 There must be at least one safe cell, so a board needs at least 2 cells. Note that the default of 10 mines does not fit on small boards: `{ rows: 3, columns: 3 }` needs a `mines` value too.
 
 Listing the positions gives you a fixed board, for puzzles, tests or bug reports. Since `endGame` reports the mines in the same shape, you can replay a finished board:
 
 ```js
-const replay = Factory.createGame(receiver, { rows: 8, columns: 10, mines: result.mines })
+const replay = Factory.createGame({ rows: 8, columns: 10, mines: result.mines, receiver })
 ```
 
 ### The game

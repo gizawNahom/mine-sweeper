@@ -35,7 +35,7 @@ function replayGame(seed) {
 	const columns = Math.max(upTo(30), rows === 1 ? 2 : 1) // a board needs at least 2 cells
 	const mines = randomMines(rows, columns, upTo)
 	const calls = []
-	const game = Factory.createGame(recorder(calls), { rows, columns, mines })
+	const game = Factory.createGame({ rows, columns, mines, receiver: recorder(calls) })
 	for (let move = 0; move < MOVES_PER_GAME; move++) {
 		const [row, column] = [upTo(rows), upTo(columns)]
 		const kind = random()

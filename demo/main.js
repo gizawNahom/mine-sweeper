@@ -54,7 +54,7 @@ boardElement.addEventListener("keydown", onCellKey)
 newGame()
 
 function newGame() {
-	game = Factory.createGame(receiver, DIFFICULTIES[difficultySelect.value])
+	game = Factory.createGame({ ...DIFFICULTIES[difficultySelect.value], receiver })
 	drawBoard(game.rows, game.columns)
 	showFlagsLeft()
 	resultElement.textContent = ""

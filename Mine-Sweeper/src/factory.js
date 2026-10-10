@@ -7,11 +7,11 @@ import Minefield from "./minefield.js"
 import MineGenerator from "./mineGenerator.js"
 import PublishingGame from "./publishingGame.js"
 
-const OPTION_NAMES = ["rows", "columns", "mines"]
+const OPTION_NAMES = ["rows", "columns", "mines", "receiver"]
 
 export default class Factory {
-	static createGame(receiver, options) {
-		const { rows, columns, mines } = Factory.#readOptions(options)
+	static createGame(options) {
+		const { rows, columns, mines, receiver } = Factory.#readOptions(options)
 		const board = new Board(rows, columns)
 		const events = new EventPublisher()
 		const game = new Game(
@@ -24,7 +24,7 @@ export default class Factory {
 		return publishingGame
 	}
 
-	static #readOptions(options = {}) {
+	static #readOptions(options) {
 		Object.keys(options).forEach((name) => {
 			if (!OPTION_NAMES.includes(name))
 				throw new TypeError(`unknown option ${JSON.stringify(name)}`)
@@ -33,8 +33,9 @@ export default class Factory {
 			rows = DEFAULT_ROWS,
 			columns = DEFAULT_COLUMNS,
 			mines = DEFAULT_MINES,
+			receiver,
 		} = options
-		return { rows, columns, mines }
+		return { rows, columns, mines, receiver }
 	}
 
 	static #layMines(mines, board) {

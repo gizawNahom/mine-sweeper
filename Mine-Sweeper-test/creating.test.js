@@ -5,7 +5,7 @@ import ReceiverRecorder from "./support/receiverRecorder"
 
 describe("Given no options", () => {
 	test("Then the board is 8x10 with 10 flags", () => {
-		const game = Factory.createGame(new ReceiverRecorder())
+		const game = Factory.createGame({ receiver: new ReceiverRecorder() })
 
 		expect(game.rows).toBe(8)
 		expect(game.columns).toBe(10)
@@ -16,7 +16,7 @@ describe("Given no options", () => {
 describe("Given 16 rows, 30 columns and 99 mines", () => {
 	test("Then the board has that size, 99 flags and 99 mines", () => {
 		const receiver = new ReceiverRecorder()
-		const game = Factory.createGame(receiver, { rows: 16, columns: 30, mines: 99 })
+		const game = Factory.createGame({ rows: 16, columns: 30, mines: 99, receiver })
 
 		revealUntilGameEnds(game, receiver)
 
@@ -32,11 +32,14 @@ describe("Given the mines are given as a list of positions", () => {
 	let game
 	beforeEach(() => {
 		receiver = new ReceiverRecorder()
-		game = Factory.createGame(receiver, board`
-			* . .
-			. . .
-			. . .
-		`)
+		game = Factory.createGame({
+			...board`
+				* . .
+				. . .
+				. . .
+			`,
+			receiver,
+		})
 	})
 
 	test("Then the board has the drawn size", () => {
@@ -73,7 +76,7 @@ describe("Given the list of mines is changed after the game is created", () => {
 	test("Then the game is not affected", () => {
 		const receiver = new ReceiverRecorder()
 		const mines = [{ row: 1, column: 1 }]
-		const game = Factory.createGame(receiver, { rows: 3, columns: 3, mines })
+		const game = Factory.createGame({ rows: 3, columns: 3, mines, receiver })
 
 		mines.push({ row: 2, column: 2 })
 		mines[0].row = 3
@@ -101,7 +104,7 @@ describe("Given invalid options", () => {
 		[{ rows: 3, columns: 3, mines: 20 }, "mines must be a whole number from 1 to 8 for a 3x3 board, got 20", RangeError],
 		[{ mines: 2.5 }, "mines must be a whole number from 1 to 79 for a 8x10 board, got 2.5", RangeError],
 	])("Then %o must be rejected with: %s", (options, message, ErrorType) => {
-		const create = () => Factory.createGame(new ReceiverRecorder(), options)
+		const create = () => Factory.createGame({ ...options, receiver: new ReceiverRecorder() })
 
 		expect(create).toThrow(ErrorType)
 		expect(create).toThrow(message)
@@ -115,7 +118,7 @@ describe("Given unusual but valid options", () => {
 		[{ rows: 1, columns: 2, mines: 1 }],
 		[{ rows: 3, columns: 3, mines: 8 }],
 	])("Then %o must not throw", (options) => {
-		expect(() => Factory.createGame(new ReceiverRecorder(), options)).not.toThrow()
+		expect(() => Factory.createGame({ ...options, receiver: new ReceiverRecorder() })).not.toThrow()
 	})
 })
 
@@ -134,7 +137,7 @@ describe("Given an invalid list of mines", () => {
 		[[{ row: 2, column: 2 }, { row: 2, column: 2 }], "mines lists 2,2 more than once", RangeError],
 	])("Then mines: %j must be rejected with: %s", (mines, message, ErrorType) => {
 		const create = () =>
-			Factory.createGame(new ReceiverRecorder(), { rows: 3, columns: 3, mines })
+			Factory.createGame({ rows: 3, columns: 3, mines, receiver: new ReceiverRecorder() })
 
 		expect(create).toThrow(ErrorType)
 		expect(create).toThrow(message)
