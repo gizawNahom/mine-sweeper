@@ -1,9 +1,3 @@
-import { DEFAULT_ROWS, DEFAULT_COLUMNS, DEFAULT_MINES } from "./constants.js"
-import Board from "./board.js"
-import Minefield from "./minefield.js"
-
-const OPTION_NAMES = ["rows", "columns", "mines"]
-
 export default class Game {
 	#numberOfFlags
 	#cells = {}
@@ -14,33 +8,13 @@ export default class Game {
 	#receiver
 	#isOver = false
 
-	constructor(receiver, mineGenerator, options) {
-		const { rows, columns, mines } = this.#readOptions(options)
+	constructor(receiver, board, minefield) {
 		this.#receiver = receiver
-		this.#board = new Board(rows, columns)
-		this.#minefield = this.#layMines(mines, mineGenerator)
+		this.#board = board
+		this.#minefield = minefield
 
-		this.#numberOfFlags = this.#minefield.size
-		this.#numberOfUnrevealedCells = this.#board.numberOfCells
-	}
-
-	#readOptions(options = {}) {
-		Object.keys(options).forEach((name) => {
-			if (!OPTION_NAMES.includes(name))
-				throw new TypeError(`unknown option ${JSON.stringify(name)}`)
-		})
-		const {
-			rows = DEFAULT_ROWS,
-			columns = DEFAULT_COLUMNS,
-			mines = DEFAULT_MINES,
-		} = options
-		return { rows, columns, mines }
-	}
-
-	#layMines(mines, mineGenerator) {
-		return Array.isArray(mines)
-			? Minefield.at(this.#board, mines)
-			: Minefield.random(this.#board, mines, mineGenerator)
+		this.#numberOfFlags = minefield.size
+		this.#numberOfUnrevealedCells = board.numberOfCells
 	}
 
 	get numberOfFlags() {
