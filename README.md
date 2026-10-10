@@ -68,10 +68,11 @@ const replay = Factory.createGame(receiver, { rows: 8, columns: 10, mines: resul
 | `game.rows`             | number of rows                                           |
 | `game.columns`          | number of columns                                        |
 | `game.numberOfFlags`    | flags left to place (starts at the number of mines)     |
+| `game.subscribe(listener)` | calls `listener(event)` for every [domain event](#domain-events); returns a function that unsubscribes |
 
 ### The receiver
 
-The receiver is any object with these four methods; all four are required. The game calls them synchronously, while `reveal`, `flag` or `unflag` is running, and only after its own state is updated: inside `flag` and `unflag`, `game.numberOfFlags` already reflects the change.
+The receiver is any object with these four methods; all four are required. They are called with the same information as the [domain events](#domain-events), at the same time: synchronously, once the move is complete, and before any listeners added with `subscribe`.
 
 | Method                                 | Called when                                                                                         |
 | -------------------------------------- | --------------------------------------------------------------------------------------------------- |
@@ -79,6 +80,29 @@ The receiver is any object with these four methods; all four are required. The g
 | `unflag(row, column)`                  | a flag was removed, by `game.unflag` or because the cell was revealed automatically                 |
 | `reveal({ row, column, adjacentMines })` | a cell was revealed. One move can reveal many cells, so expect several calls per `game.reveal`    |
 | `endGame({ won, mines })`              | the game was won or lost (called once). `mines` lists every mine as `{ row, column }`                |
+
+### Domain events
+
+`game.subscribe(listener)` lets any number of listeners follow the game. Each event is a plain, frozen object with a `type`:
+
+| `type`            | Other fields                       | When                                                              |
+| ----------------- | ---------------------------------- | ----------------------------------------------------------------- |
+| `"CellFlagged"`   | `row`, `column`                    | a cell was flagged                                                |
+| `"CellUnflagged"` | `row`, `column`                    | a flag was removed, by `game.unflag` or by automatic revealing    |
+| `"CellRevealed"`  | `row`, `column`, `adjacentMines`   | a cell was revealed; one move can reveal many cells               |
+| `"GameWon"`       | `mines`                            | every safe cell has been revealed                                 |
+| `"GameLost"`      | `mines`                            | a mine was revealed                                               |
+
+```js
+const unsubscribe = game.subscribe((event) => console.log(event))
+game.reveal(4, 5)   // { type: "CellRevealed", row: 4, column: 5, adjacentMines: 2 } …
+unsubscribe()
+```
+
+- Events are delivered synchronously **after** the move is complete, in the order they happened, to listeners in the order they subscribed. A listener therefore always sees the finished move: `game.numberOfFlags` is already up to date.
+- If a listener makes a move, that move's events are delivered after the current ones.
+- If a listener throws, the other listeners still receive every event; the error is then rethrown to the caller of the move (several errors as an `AggregateError`). The move itself is complete either way.
+- Subscribing with something that is not a function throws a `TypeError`.
 
 ### Errors
 

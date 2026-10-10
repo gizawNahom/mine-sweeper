@@ -1,8 +1,11 @@
 import { DEFAULT_ROWS, DEFAULT_COLUMNS, DEFAULT_MINES } from "./constants.js"
 import Board from "./board.js"
+import EventPublisher from "./eventPublisher.js"
+import EventRecordingOutputPort from "./eventRecordingOutputPort.js"
 import Game from "./game.js"
 import Minefield from "./minefield.js"
 import MineGenerator from "./mineGenerator.js"
+import PublishingGame from "./publishingGame.js"
 
 const OPTION_NAMES = ["rows", "columns", "mines"]
 
@@ -10,7 +13,15 @@ export default class Factory {
 	static createGame(receiver, options) {
 		const { rows, columns, mines } = Factory.#readOptions(options)
 		const board = new Board(rows, columns)
-		return new Game(receiver, board, Factory.#layMines(mines, board))
+		const events = new EventPublisher()
+		const game = new Game(
+			new EventRecordingOutputPort(events),
+			board,
+			Factory.#layMines(mines, board)
+		)
+		const publishingGame = new PublishingGame(game, events)
+		publishingGame.subscribe(Factory.#forwardEventsTo(receiver))
+		return publishingGame
 	}
 
 	static #readOptions(options = {}) {
@@ -30,5 +41,16 @@ export default class Factory {
 		return Array.isArray(mines)
 			? Minefield.at(board, mines)
 			: Minefield.random(board, mines, new MineGenerator())
+	}
+
+	static #forwardEventsTo(receiver) {
+		return (event) => {
+			const { type, row, column } = event
+			if (type === "CellFlagged") receiver.flag(row, column)
+			else if (type === "CellUnflagged") receiver.unflag(row, column)
+			else if (type === "CellRevealed")
+				receiver.reveal({ row, column, adjacentMines: event.adjacentMines })
+			else receiver.endGame({ won: type === "GameWon", mines: event.mines })
+		}
 	}
 }
