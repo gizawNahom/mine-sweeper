@@ -115,6 +115,38 @@ unsubscribe()
 - If a listener throws, the other listeners still receive every event; the error is then rethrown to the caller of the move (several errors as an `AggregateError`). The move itself is complete either way.
 - Subscribing with something that is not a function throws a `TypeError`.
 
+### Observing a game
+
+Domain events are also how you observe a game: for logging, debugging, analytics or measurements, subscribe a listener. The engine has no logging dependency of its own, so any logger or analytics tool fits.
+
+```js
+import { Factory } from "./src/index.js"
+
+// A 3x3 board with one mine in a corner, so the example below ends predictably
+const game = Factory.createGame({ rows: 3, columns: 3, mines: [{ row: 1, column: 1 }] })
+
+// Log every event, e.g. while debugging
+game.subscribe((event) => console.log(event.type, event))
+
+// React to one kind of event
+game.subscribe((event) => {
+	if (event.type === "GameWon") console.log("🎉 won")
+})
+
+// Measure a game: how many cells were revealed, and how long it took
+const startedAt = Date.now()
+let revealedCells = 0
+game.subscribe((event) => {
+	if (event.type === "CellRevealed") revealedCells++
+	if (event.type === "GameWon" || event.type === "GameLost")
+		console.log(`${event.type} after ${revealedCells} revealed cells in ${Date.now() - startedAt} ms`)
+})
+
+game.reveal(3, 3)   // opens every safe cell and wins: 8 CellRevealed events, then GameWon
+```
+
+Each listener is independent: an observer can be added or removed (with the function `subscribe` returns) without touching the code that plays the game, and a listener that throws doesn't stop the others or the game.
+
 ### Errors
 
 Invalid input throws instead of being ignored, and a rejected call changes nothing:
