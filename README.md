@@ -9,10 +9,30 @@ A UI-agnostic Minesweeper game engine written in plain JavaScript (ES modules, n
 
 The engine holds the game rules — mine placement, flagging, revealing, flood-fill of empty areas, and win/loss detection — and announces every change as a [domain event](#domain-events) such as `CellRevealed` or `GameWon`. Any number of listeners can follow a game with `game.subscribe`, which keeps the engine decoupled from any particular UI: plug in a DOM board, a React component, a logger, or a test. If you prefer one object with a method per kind of change, pass a [receiver](#the-receiver) instead.
 
+## Installation
+
+The engine has no dependencies and comes with TypeScript definitions. It runs in Node.js 22 or later and in modern browsers. It is not published to npm; install it from GitHub, or copy it.
+
+**With npm, from GitHub:** pin a release tag.
+
+```sh
+npm install github:gizawNahom/mine-sweeper#v1.0.0
+```
+
+```js
+import { createGame } from "mine-sweeper"
+```
+
+**By copying:** copy `src/` into your project, for example as `mine-sweeper/`, and import it by path. This works in browsers without a build step, as the [plain demo](demos/plain/) does.
+
+```js
+import { createGame } from "./mine-sweeper/index.js"
+```
+
 ## Quick start
 
 ```js
-import { createGame } from "./src/index.js"
+import { createGame } from "mine-sweeper"
 
 const receiver = {
 	flag(row, column) { console.log(`flagged ${row},${column}`) },
@@ -29,14 +49,12 @@ game.reveal(4, 5)
 Or leave the receiver out and subscribe to [domain events](#domain-events):
 
 ```js
-import { createGame } from "./src/index.js"
+import { createGame } from "mine-sweeper"
 
 const game = createGame()
 game.subscribe((event) => console.log(event))
 game.reveal(4, 5)
 ```
-
-The engine is not published to npm yet: copy `src/` into your project (or import it from this repository, as the demo does). It runs in modern browsers and in Node.js; CI tests it on Node.js 22, 24 and 26.
 
 ## How the game plays
 
@@ -120,7 +138,7 @@ unsubscribe()
 Domain events are also how you observe a game: for logging, debugging, analytics or measurements, subscribe a listener. The engine has no logging dependency of its own, so any logger or analytics tool fits.
 
 ```js
-import { createGame } from "./src/index.js"
+import { createGame } from "mine-sweeper"
 
 // A 3x3 board with one mine in a corner, so the example below ends predictably
 const game = createGame({ rows: 3, columns: 3, mines: [{ row: 1, column: 1 }] })
