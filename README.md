@@ -48,7 +48,7 @@ The engine is not published to npm yet: copy `src/` into your project (or import
 
 ## API
 
-The package's only entry point is `src/index.js`, which exports `Factory`. The other modules are internal: the package does not export them, so importing `mine-sweeper/src/...` fails.
+The package's only entry point is `src/index.js`, which exports `Factory`. TypeScript definitions are included (`src/index.d.ts`), so editors can autocomplete and check the whole API, also in plain JavaScript. The other modules are internal: the package does not export them, so importing `mine-sweeper/src/...` fails.
 
 ### `Factory.createGame(options)`
 

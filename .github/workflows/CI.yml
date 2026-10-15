@@ -27,6 +27,7 @@ jobs:
         cache-dependency-path: package-lock.json
     - run: npm ci
     - run: npm run coverage
+    - run: npm run test:types
 
   react-demo:
     defaults:

@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "A UI-agnostic Minesweeper game engine in JavaScript",
   "main": "src/index.js",
+  "types": "./src/index.d.ts",
   "exports": {
-    ".": "./src/index.js"
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    }
   },
   "type": "module",
   "files": [
@@ -30,12 +34,14 @@
   },
   "scripts": {
     "test": "jest",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "test:types": "tsc -p test/types"
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",
     "@babel/preset-env": "^7.29.7",
-    "jest": "^30.5.2"
+    "jest": "^30.5.2",
+    "typescript": "^7.0.2"
   },
   "overrides": {
     "js-yaml": {

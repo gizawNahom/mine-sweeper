@@ -20,6 +20,7 @@ You need Node.js 22 or later.
 npm ci
 npm test           # run the tests
 npm run coverage   # run the tests with a coverage report
+npm run test:types # check the TypeScript definitions in src/index.d.ts
 ```
 
 The engine (`src/`) has no runtime dependencies; Jest and Babel are development dependencies, used only for testing.
