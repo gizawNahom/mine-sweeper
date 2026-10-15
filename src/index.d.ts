@@ -82,7 +82,5 @@ export interface Game {
 	subscribe(listener: (event: GameEvent) => void): () => void
 }
 
-export declare class Factory {
-	/** Creates a game. Invalid options throw a `TypeError` or `RangeError`. */
-	static createGame(options?: GameOptions): Game
-}
+/** Creates a game. Invalid options throw a `TypeError` or `RangeError`. */
+export declare function createGame(options?: GameOptions): Game

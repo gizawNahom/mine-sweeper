@@ -45,7 +45,7 @@ describe("And the user has flagged an armed cell", () => {
 
 CI requires **100% coverage** of the engine, so every change to `src/` needs tests. Coverage only shows that code ran, so make sure your tests also check the result.
 
-Tests use only the public API (`import { Factory } from "mine-sweeper"`), so refactoring the engine doesn't break them. The one exception is `test/internals/`, for checks that can't be made from outside, such as `PublishingGame` forwarding every public member of `Game`; keep it small.
+Tests use only the public API (`import { createGame } from "mine-sweeper"`), so refactoring the engine doesn't break them. The one exception is `test/internals/`, for checks that can't be made from outside, such as `PublishingGame` forwarding every public member of `Game`; keep it small.
 
 The demos have browser tests in `e2e/`, run with Playwright against the site exactly as it is deployed (served under `/mine-sweeper/`, like GitHub Pages):
 

@@ -1,4 +1,4 @@
-import { Factory } from "../../src/index.js"
+import { createGame } from "../../src/index.js"
 
 const DIFFICULTIES = {
 	default: undefined, // the engine's default: 8x10 with 10 mines
@@ -54,7 +54,7 @@ boardElement.addEventListener("keydown", onCellKey)
 newGame()
 
 function newGame() {
-	game = Factory.createGame({ ...DIFFICULTIES[difficultySelect.value], receiver })
+	game = createGame({ ...DIFFICULTIES[difficultySelect.value], receiver })
 	drawBoard(game.rows, game.columns)
 	showFlagsLeft()
 	resultElement.textContent = ""

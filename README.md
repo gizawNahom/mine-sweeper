@@ -12,7 +12,7 @@ The engine holds the game rules — mine placement, flagging, revealing, flood-f
 ## Quick start
 
 ```js
-import { Factory } from "./src/index.js"
+import { createGame } from "./src/index.js"
 
 const receiver = {
 	flag(row, column) { console.log(`flagged ${row},${column}`) },
@@ -21,7 +21,7 @@ const receiver = {
 	endGame({ won, mines }) { console.log(won ? "won" : "lost", mines) },
 }
 
-const game = Factory.createGame({ receiver })
+const game = createGame({ receiver })
 game.flag(1, 1)
 game.reveal(4, 5)
 ```
@@ -29,9 +29,9 @@ game.reveal(4, 5)
 Or leave the receiver out and subscribe to [domain events](#domain-events):
 
 ```js
-import { Factory } from "./src/index.js"
+import { createGame } from "./src/index.js"
 
-const game = Factory.createGame()
+const game = createGame()
 game.subscribe((event) => console.log(event))
 game.reveal(4, 5)
 ```
@@ -48,9 +48,9 @@ The engine is not published to npm yet: copy `src/` into your project (or import
 
 ## API
 
-The package's only entry point is `src/index.js`, which exports `Factory`. TypeScript definitions are included (`src/index.d.ts`), so editors can autocomplete and check the whole API, also in plain JavaScript. The other modules are internal: the package does not export them, so importing `mine-sweeper/src/...` fails.
+The package's only entry point is `src/index.js`, which exports `createGame`. TypeScript definitions are included (`src/index.d.ts`), so editors can autocomplete and check the whole API, also in plain JavaScript. The other modules are internal: the package does not export them, so importing `mine-sweeper/src/...` fails.
 
-### `Factory.createGame(options)`
+### `createGame(options)`
 
 Creates a new game. `options` is optional, and so is each field in it:
 
@@ -66,7 +66,7 @@ There must be at least one safe cell, so a board needs at least 2 cells. Note th
 Listing the positions gives you a fixed board, for puzzles, tests or bug reports. Since `endGame` reports the mines in the same shape, you can replay a finished board:
 
 ```js
-const replay = Factory.createGame({ rows: 8, columns: 10, mines: result.mines, receiver })
+const replay = createGame({ rows: 8, columns: 10, mines: result.mines, receiver })
 ```
 
 ### The game
@@ -120,10 +120,10 @@ unsubscribe()
 Domain events are also how you observe a game: for logging, debugging, analytics or measurements, subscribe a listener. The engine has no logging dependency of its own, so any logger or analytics tool fits.
 
 ```js
-import { Factory } from "./src/index.js"
+import { createGame } from "./src/index.js"
 
 // A 3x3 board with one mine in a corner, so the example below ends predictably
-const game = Factory.createGame({ rows: 3, columns: 3, mines: [{ row: 1, column: 1 }] })
+const game = createGame({ rows: 3, columns: 3, mines: [{ row: 1, column: 1 }] })
 
 // Log every event, e.g. while debugging
 game.subscribe((event) => console.log(event.type, event))
@@ -151,8 +151,8 @@ Each listener is independent: an observer can be added or removed (with the func
 
 Invalid input throws instead of being ignored, and a rejected call changes nothing:
 
-- `Factory.createGame` throws a `TypeError` when a receiver is given but is not an object or lacks one of its four methods (`receiver.unflag must be a function, got undefined`).
-- `Factory.createGame` throws when `options` is invalid: a `TypeError` for unknown option names or non-numbers (`{ row: 16 }`, `{ rows: "8" }`), and a `RangeError` for values out of range (`{ rows: 0 }`, `{ rows: 3, columns: 3, mines: 9 }`).
+- `createGame` throws a `TypeError` when a receiver is given but is not an object or lacks one of its four methods (`receiver.unflag must be a function, got undefined`).
+- `createGame` throws when `options` is invalid: a `TypeError` for unknown option names or non-numbers (`{ row: 16 }`, `{ rows: "8" }`), and a `RangeError` for values out of range (`{ rows: 0 }`, `{ rows: 3, columns: 3, mines: 9 }`).
 - `reveal`, `flag` and `unflag` throw for a position that is not on the board: a `RangeError` for `reveal(0, 5)` or `reveal(9, 1)` on an 8-row board, and a `TypeError` for `reveal("13")`. This applies even after the game is over.
 
 Error messages name the option or coordinate and the value, for example `mines must be a whole number from 1 to 8 for a 3x3 board, got 9`.

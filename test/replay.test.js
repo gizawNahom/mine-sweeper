@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto"
-import { Factory } from "mine-sweeper"
+import { createGame } from "mine-sweeper"
 
 // A safety net for refactors: replays 500 seeded random games and compares a
 // fingerprint of every receiver call, in order, with the one recorded below.
@@ -35,7 +35,7 @@ function replayGame(seed) {
 	const columns = Math.max(upTo(30), rows === 1 ? 2 : 1) // a board needs at least 2 cells
 	const mines = randomMines(rows, columns, upTo)
 	const calls = []
-	const game = Factory.createGame({ rows, columns, mines, receiver: recorder(calls) })
+	const game = createGame({ rows, columns, mines, receiver: recorder(calls) })
 	for (let move = 0; move < MOVES_PER_GAME; move++) {
 		const [row, column] = [upTo(rows), upTo(columns)]
 		const kind = random()

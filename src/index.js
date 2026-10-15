@@ -1,3 +1,5 @@
 import Factory from "./factory.js"
 
-export { Factory }
+export function createGame(options) {
+	return Factory.createGame(options)
+}

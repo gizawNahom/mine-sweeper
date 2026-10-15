@@ -1,12 +1,12 @@
 import { useEffect, useReducer, useState } from "react"
-import { Factory } from "mine-sweeper"
+import { createGame } from "mine-sweeper"
 import { boardReducer, initialBoard } from "./boardReducer"
 
 // Creates a game, follows its domain events, and exposes the board to render
 // plus the moves to make. Each mount is one game: remount (with a new `key`)
 // to start another.
 export function useMineSweeper(options) {
-	const [game] = useState(() => Factory.createGame(options))
+	const [game] = useState(() => createGame(options))
 	const [board, dispatch] = useReducer(boardReducer, game, initialBoard)
 
 	// subscribe returns its own unsubscribe, which is exactly React's cleanup.

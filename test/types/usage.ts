@@ -3,12 +3,12 @@
 // the engine is meant to be used.
 // @ts-expect-error: internal modules are not part of the package
 import Game from "mine-sweeper/src/game.js"
-import { Factory, type GameEvent, type Position, type Receiver } from "mine-sweeper"
+import { createGame, type GameEvent, type Position, type Receiver } from "mine-sweeper"
 
 // Creating games
-const game = Factory.createGame()
-Factory.createGame({ rows: 16, columns: 30, mines: 99 })
-Factory.createGame({ rows: 3, columns: 3, mines: [{ row: 1, column: 1 }] })
+const game = createGame()
+createGame({ rows: 16, columns: 30, mines: 99 })
+createGame({ rows: 3, columns: 3, mines: [{ row: 1, column: 1 }] })
 
 const receiver: Receiver = {
 	flag(row, column) {},
@@ -16,7 +16,7 @@ const receiver: Receiver = {
 	reveal({ row, column, adjacentMines }) {},
 	endGame({ won, mines }) {},
 }
-Factory.createGame({ receiver })
+createGame({ receiver })
 
 // Playing and reading the game
 game.reveal(1, 2)
@@ -51,11 +51,11 @@ unsubscribe()
 
 // Mistakes the types must catch
 // @ts-expect-error: unknown option (rows is spelled with an s)
-Factory.createGame({ row: 16 })
+createGame({ row: 16 })
 // @ts-expect-error: rows must be a number
-Factory.createGame({ rows: "8" })
+createGame({ rows: "8" })
 // @ts-expect-error: a receiver needs all four methods
-Factory.createGame({ receiver: { flag() {} } })
+createGame({ receiver: { flag() {} } })
 // @ts-expect-error: a move takes a row and a column
 game.reveal("13")
 // @ts-expect-error: numberOfFlags is read-only

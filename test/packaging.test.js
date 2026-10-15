@@ -17,8 +17,8 @@ function importInNode(specifier) {
 }
 
 describe("Given the mine-sweeper package", () => {
-	test("Then its entry point exports the Factory", () => {
-		expect(importInNode("mine-sweeper")).toBe("ok Factory")
+	test("Then its entry point exports createGame", () => {
+		expect(importInNode("mine-sweeper")).toBe("ok createGame")
 	})
 
 	test.each(["mine-sweeper/src/game.js", "mine-sweeper/src/board.js", "mine-sweeper/package.json"])(
