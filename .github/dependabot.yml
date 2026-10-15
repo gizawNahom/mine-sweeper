@@ -23,6 +23,15 @@ updates:
       react-demo:
         update-types: [minor, patch]
 
+  # The browser tests (Playwright).
+  - package-ecosystem: npm
+    directory: /e2e
+    schedule:
+      interval: weekly
+    groups:
+      e2e:
+        update-types: [minor, patch]
+
   - package-ecosystem: github-actions
     directory: /
     schedule:
