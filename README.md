@@ -222,6 +222,10 @@ npm run coverage   # run the tests with a coverage report
 
 CI enforces 100% coverage of the engine (`src/`), so the build fails if any code goes untested. Coverage measures which code runs during the tests, not whether it behaves correctly.
 
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for what changed in each release, including breaking changes.
+
 ## Contributing
 
 Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to set up, test and submit changes.
