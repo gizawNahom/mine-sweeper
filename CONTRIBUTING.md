@@ -36,8 +36,8 @@ This project is built test-first:
 Tests use nested `describe` blocks that read as *Given / When / Then*:
 
 ```js
-describe("And the user has flagged an armed cell", () => {
-	describe("When the user reveals it", () => {
+describe("And a mine is flagged", () => {
+	describe("When the user reveals the flagged mine", () => {
 		test("Then nothing happens", () => { ... })
 	})
 })
