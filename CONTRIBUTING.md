@@ -46,6 +46,16 @@ CI requires **100% coverage** of the engine, so every change to `src/` needs tes
 
 Tests use only the public API (`import { Factory } from "mine-sweeper"`), so refactoring the engine doesn't break them. The one exception is `test/internals/`, for checks that can't be made from outside, such as `PublishingGame` forwarding every public member of `Game`; keep it small.
 
+The demos have browser tests in `e2e/`, run with Playwright against the site exactly as it is deployed (served under `/mine-sweeper/`, like GitHub Pages):
+
+```sh
+scripts/build-site.sh             # build the site into site/
+cd e2e
+npm ci
+npx playwright install chromium   # or set CHROMIUM_PATH to a Chromium you already have
+npm test
+```
+
 `replay.test.js` replays 500 seeded random games and compares a fingerprint of everything the receiver was told. A pure refactor must leave it passing. If you change behavior on purpose, it will fail: update `RECORDED_FINGERPRINT` to the value in the failure message, in the same commit as the change.
 
 ## Code style
